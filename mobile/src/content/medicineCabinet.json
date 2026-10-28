@@ -1,0 +1,115 @@
+{
+  "_info": "Hausapotheke je Land. country \"*\" = gilt in allen Ländern. kind: supply (Verbandsmaterial/Hilfsmittel) | medicine (nur Wirkstoffgruppe, KEINE Dosierungen, keine Präparate). Arzneimittel werden in Store-Builds erst mit status \"reviewed\" angezeigt. Prüfung: npm run check:content.",
+  "items": [
+    {
+      "id": "bandages",
+      "country": "*",
+      "kind": "supply",
+      "title": "Verbandsmaterial",
+      "description": "Pflaster in verschiedenen Größen, sterile Wundkompressen, Mullbinden, elastische Binden und ein Dreiecktuch.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "thermometer",
+      "country": "*",
+      "kind": "supply",
+      "title": "Fieberthermometer",
+      "description": "Ein digitales Thermometer. Die Batterie ab und zu prüfen.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "gloves",
+      "country": "*",
+      "kind": "supply",
+      "title": "Einmalhandschuhe",
+      "description": "Schützen dich und die verletzte Person bei der Wundversorgung.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "coolpack",
+      "country": "*",
+      "kind": "supply",
+      "title": "Kühlpack",
+      "description": "Im Gefrierfach aufbewahren. Nie direkt auf die Haut legen, sondern in ein Tuch wickeln.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "tweezers",
+      "country": "*",
+      "kind": "supply",
+      "title": "Pinzette und Zeckenkarte",
+      "description": "Für Splitter und zum Entfernen von Zecken.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "scissors",
+      "country": "*",
+      "kind": "supply",
+      "title": "Verbandschere",
+      "description": "Eine Schere mit abgerundeter Spitze zum Zuschneiden von Verbänden.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "rescue-blanket",
+      "country": "*",
+      "kind": "supply",
+      "title": "Rettungsdecke",
+      "description": "Schützt vor Auskühlung, zum Beispiel nach einem Sturz.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "de-pain-fever",
+      "country": "DE",
+      "kind": "medicine",
+      "title": "Schmerz- und fiebersenkendes Mittel",
+      "description": "Ein frei verkäufliches Mittel gegen Schmerzen und Fieber. Für Kinder gibt es eigene Darreichungsformen.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "de-diarrhea",
+      "country": "DE",
+      "kind": "medicine",
+      "title": "Mittel gegen Durchfall",
+      "description": "Dazu gehört auch eine Elektrolyt-Trinklösung, die verlorene Flüssigkeit und Salze ersetzt.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "de-antiseptic",
+      "country": "DE",
+      "kind": "medicine",
+      "title": "Wunddesinfektionsmittel",
+      "description": "Zum Reinigen kleiner Wunden. Nicht für große oder tiefe Wunden – dann ärztlich versorgen lassen.",
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    }
+  ]
+}
