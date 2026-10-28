@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -21,6 +22,9 @@ import Telemedicine from "@/pages/Telemedicine";
 import Transport from "@/pages/Transport";
 import Triage from "@/pages/Triage";
 
+// Admin-Ansicht als eigener Chunk – wird nur beim Aufruf von /admin geladen.
+const AdminApp = lazy(() => import("@/admin/AdminApp"));
+
 export default function App() {
   return (
     <I18nProvider>
@@ -30,6 +34,14 @@ export default function App() {
           <Routes>
             {/* Vollbild für Rettungskräfte bewusst ohne App-Navigation */}
             <Route path="/pass/:id/show" element={<EmergencyPassView />} />
+            <Route
+              path="/admin/*"
+              element={
+                <Suspense fallback={<p className="p-6">Wird geladen …</p>}>
+                  <AdminApp />
+                </Suspense>
+              }
+            />
 
             <Route element={<AppLayout />}>
               <Route index element={<Home />} />

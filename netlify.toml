@@ -3,9 +3,17 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# Die Funktion registriert ihren Pfad /api/assistant selbst (export const config).
+# Die Funktionen registrieren ihre Pfade unter /api/... selbst (export const config).
 # SPA-Fallback für react-router:
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Admin-Ansicht: nicht indexieren, nicht einbetten.
+[[headers]]
+  for = "/admin*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
