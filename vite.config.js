@@ -1,33 +1,64 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+const SERVER_ENV = [
+  "ANTHROPIC_API_KEY",
+  "ANTHROPIC_MODEL",
+  "ADMIN_PASSWORD",
+  "HASH_SECRET",
+  "BREVO_API_KEY",
+  "MAIL_FROM",
+  "MAIL_FROM_NAME",
+  "SEED_DEMO_PARTNERS",
+  "STORAGE_BACKEND",
+];
+
+const FUNCTIONS_DIR = path.resolve(here, "netlify/functions");
+
+/** Wandelt einen Netlify-Pfad ("/api/admin/*") in einen regulären Ausdruck. */
+function pathPattern(p) {
+  return new RegExp(`^${p.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")}/?$`);
+}
 
 /**
- * Führt die Netlify-Funktion im Vite-Dev-Server unter /api/assistant aus,
- * damit `npm run dev` ohne Netlify CLI funktioniert.
+ * Führt die Netlify-Funktionen (netlify/functions/*.mjs) im Vite-Dev-Server unter ihrem
+ * `config.path` aus, damit `npm run dev` ohne Netlify CLI funktioniert. Daten liegen lokal in .data/.
  */
 function netlifyFunctionDev() {
   return {
     name: "netlify-function-dev",
     configureServer(server) {
-      server.middlewares.use("/api/assistant", async (req, res) => {
+      server.middlewares.use(async (req, res, next) => {
+        const pathname = new URL(req.originalUrl, "http://localhost").pathname;
+        if (!pathname.startsWith("/api/")) return next();
         try {
+          let handler = null;
+          for (const file of fs.readdirSync(FUNCTIONS_DIR).filter((f) => f.endsWith(".mjs"))) {
+            const mod = await server.ssrLoadModule(`/netlify/functions/${file}`);
+            const paths = [mod.config?.path].flat().filter(Boolean);
+            if (paths.some((p) => pathPattern(p).test(pathname))) handler = mod.default;
+          }
+          if (!handler) return next();
+
           const chunks = [];
           for await (const chunk of req) chunks.push(chunk);
-          const body = Buffer.concat(chunks).toString("utf8");
-          const request = new Request(`http://localhost${req.originalUrl}`, {
+          const headers = new Headers();
+          for (const [key, value] of Object.entries(req.headers)) if (typeof value === "string") headers.set(key, value);
+          const request = new Request(`http://${req.headers.host || "localhost"}${req.originalUrl}`, {
             method: req.method,
-            headers: { "content-type": req.headers["content-type"] || "application/json" },
-            body: req.method === "GET" || req.method === "HEAD" ? undefined : body,
+            headers,
+            body: req.method === "GET" || req.method === "HEAD" ? undefined : Buffer.concat(chunks),
           });
-          const mod = await server.ssrLoadModule("/netlify/functions/assistant.mjs");
-          const response = await mod.default(request, {});
+          const response = await handler(request, { ip: req.socket.remoteAddress });
           res.statusCode = response.status;
-          response.headers.forEach((value, key) => res.setHeader(key, value));
-          res.end(await response.text());
+          response.headers.forEach((value, key) => key !== "set-cookie" && res.setHeader(key, value));
+          const cookies = response.headers.getSetCookie();
+          if (cookies.length) res.setHeader("set-cookie", cookies);
+          res.end(Buffer.from(await response.arrayBuffer()));
         } catch (error) {
           res.statusCode = 500;
           res.setHeader("content-type", "application/json");
@@ -39,11 +70,13 @@ function netlifyFunctionDev() {
 }
 
 export default defineConfig(({ mode }) => {
-  // Serverseitige Variablen (ANTHROPIC_API_KEY) aus .env für die Dev-Funktion bereitstellen.
+  // Serverseitige Variablen aus .env für die Dev-Funktionen bereitstellen (nie im Browser-Bundle).
   const env = loadEnv(mode, here, "");
-  for (const key of ["ANTHROPIC_API_KEY", "ANTHROPIC_MODEL"]) {
+  for (const key of SERVER_ENV) {
     if (env[key] && !process.env[key]) process.env[key] = env[key];
   }
+  // Lokal speichern die Funktionen in .data/ statt in Netlify Blobs.
+  if (mode === "development" && !process.env.STORAGE_BACKEND) process.env.STORAGE_BACKEND = "file";
 
   return {
     plugins: [react(), netlifyFunctionDev()],

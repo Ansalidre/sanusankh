@@ -5,3 +5,5 @@ dist
 .env.local
 *.log
 .DS_Store
+# Lokale Daten der Dev-Funktionen (Partner, Vermittlungen)
+.data
