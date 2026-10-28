@@ -107,8 +107,9 @@ const PAGES = {
           Notfallpass, Angaben zur Patientenverfügung (vorhanden ja/nein, Aufbewahrungsort, bevollmächtigte Person), ein
           optionales Foto der Verfügung, Bestattungswünsche und deine Hausapotheke (vorhanden, Haltbarkeitsdaten) werden
           ausschließlich auf deinem Gerät gespeichert. Sie werden weder an uns noch an Anbieter oder an den KI-Assistenten
-          übertragen. Weitergegeben werden sie nur, wenn du selbst „Als Text teilen“ wählst. Bestattungswünsche erscheinen
-          im Vollbild-Notfallpass nur, wenn du das einschaltest.
+          übertragen. Weitergegeben werden sie nur, wenn du selbst „Als Text teilen“ wählst oder deine Bestattungswünsche
+          per eigenem Klick an eine Anfrage anhängst (Abschnitt 11). Bestattungswünsche erscheinen im Vollbild-Notfallpass
+          nur, wenn du das einschaltest.
           <P>TODO: Einordnung nach Art. 9 DSGVO, Rechtsgrundlage und Hinweis zur fehlenden Verschlüsselung des Gerätespeichers juristisch prüfen</P>
         </Para>
         <H>8. Erinnerungen, Kamera und Fotos</H>
@@ -132,7 +133,37 @@ const PAGES = {
           derzeit nicht statt.
           <P>TODO: Kennzeichnungspflichten (UWG, DDG), Vergütungsmodell und ggf. Versicherungsvermittlung (§ 34d GewO) juristisch prüfen</P>
         </Para>
-        <H>11. Deine Rechte</H>
+        <H>11. Anfragen an Kooperations-Bestatter</H>
+        <Para>
+          Sendest du über die App eine Anfrage an einen als „Partner“ gekennzeichneten Bestatter, übermitteln wir die Angaben
+          aus dem Anfrageformular (Name, E-Mail, optional Telefon, Wunschtermin, Nachricht und – nur wenn du sie selbst
+          anhängst – deine Bestattungswünsche) an diesen Bestatter, per E-Mail und gegebenenfalls über eine technische
+          Schnittstelle (Webhook). Rechtsgrundlage ist deine ausdrückliche Einwilligung, die du vor dem Absenden erteilst und
+          jederzeit widerrufen kannst. Andere Daten aus der App (Notfallpass, Patientenverfügung) werden nicht übermittelt.
+          Du erhältst eine Bestätigung mit deinem Rabattcode per E-Mail.
+        </Para>
+        <Para>
+          Für den Versand nutzen wir den E-Mail-Dienst Brevo (Frankreich). Die Serverfunktionen laufen bei Netlify (USA);
+          dabei kann eine Übermittlung in die USA stattfinden. Auf unserem Server speichern wir zu jeder
+          Anfrage nur den Rabattcode, den Bestatter, die gewählte Leistung, das Datum, den Bearbeitungsstand und – vom
+          Bestatter gemeldet – den Auftragswert, um unsere Vermittlungsprovision abzurechnen. Name, Telefonnummer, E-Mail und
+          Nachricht speichern wir nicht. Zum Schutz vor Missbrauch zählen wir Anfragen kurzzeitig anhand eines täglich
+          wechselnden, nicht umkehrbaren Werts, der aus der IP-Adresse gebildet wird; die IP-Adresse selbst wird nicht
+          gespeichert. Deine eigenen Anfragen (Code, Bestatter, Leistung, Datum) liegen unter „Meine Anfragen“ nur auf
+          deinem Gerät. Ziehst du eine Anfrage zurück, informieren wir den Bestatter.
+        </Para>
+        <Para>
+          SanusAnkh erhält bei einer Beauftragung eine Vermittlungsprovision vom Bestatter. Für dich entstehen dadurch keine
+          Mehrkosten. Vertrag und Bezahlung vereinbarst du direkt mit dem Bestatter; für dessen Umgang mit deinen Daten gelten
+          seine Datenschutzhinweise.
+          <P>
+            TODO: juristisch prüfen – genaue Firmenbezeichnung und Anschrift von Brevo und Netlify, Einwilligungstext, Speicherdauer der Vermittlungsdaten (Aufbewahrungsfristen für die
+            Abrechnung), Auftragsverarbeitungsverträge mit Brevo und Netlify, Drittlandübermittlung USA (Netlify, z. B. EU-US
+            Data Privacy Framework/Standardvertragsklauseln), Rolle des Bestatters als eigener Verantwortlicher, ob
+            Bestattungswünsche besondere Kategorien nach Art. 9 DSGVO (religiöse Überzeugungen) betreffen
+          </P>
+        </Para>
+        <H>12. Deine Rechte</H>
         <Para>
           Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch sowie
           das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.

@@ -45,10 +45,32 @@ Für alle Länder außer Deutschland gilt außerdem: Symptom-Check, Fahrdienst-H
 
 | Was | Wo |
 | --- | --- |
-| Partnerverträge Bestatter: Name, Adresse, Koordinaten, Telefon, Website, Logo, Vertrag von/bis, Priorität | `src/content/providers.json` (`type: "funeral"`) |
+| Kooperations-Bestatter: Name, Adresse, Koordinaten, Telefon, Website, Rabatt mit Bedingungen, buchbare Leistungen mit Richtpreisen, E-Mail für Anfragen, Provisionsmodell, Vertrag von/bis, Ansprechpartner | Admin-Ansicht `/admin` → „Bestatter“ (nicht mehr in `providers.json`) |
 | Partnerverträge Sterbegeldversicherung: Name, Website, Logo, Vertrag von/bis, Tracking-Parameter | `providers.json` (`type: "insurance"`) |
 | Logos der Partner (https-Adresse) | Feld `logo` – die App zeigt Logos derzeit noch nicht an; bei Lieferung ergänzen wir die Anzeige |
-| Ersetzen bzw. Löschen der beiden Demo-Anbieter | `providers.json` (`"demo": true`) |
+| Ersetzen bzw. Löschen der Demo-Anbieter | `providers.json` (Sterbegeld, `"demo": true`); Demo-Bestatter wird nur lokal bzw. mit `SEED_DEMO_PARTNERS=true` angelegt |
 | Telemedizin-Partner und Online-Apotheke (wie bisher Platzhalter) | `src/app/telemedicine.js`, `src/app/pharmacy.js` |
 | Logo als Vektordatei (SVG) oder in höherer Auflösung | `assets/brand/` – Icons wurden aus dem 1254-px-JPG erzeugt |
 | Freigabe der Ansprache „du“: Der Apotheken-Hinweis lautet in der App „Frag in deiner Apotheke …“ statt „Fragen Sie …“, passend zur übrigen App | `src/locales/*.js`, Schlüssel `cabinet.medHint` |
+
+## 5. Kooperations- und Buchungsmodell Bestatter
+
+Technisch umgesetzt und im Testbetrieb durchklickbar. Vor dem Live-Betrieb:
+
+| Was | Wer | Wo / Hinweis |
+| --- | --- | --- |
+| Auftragsverarbeitungsvertrag (AVV) mit **Brevo** | Kunde | Brevo-Konto; Absenderdomain bei Brevo verifizieren (SPF/DKIM) |
+| Auftragsverarbeitungsvertrag (AVV) mit **Netlify** – US-Anbieter, Drittlandübermittlung in der Datenschutzerklärung nennen (z. B. EU-US Data Privacy Framework/Standardvertragsklauseln) | Kunde, juristisch | Datenschutz Abschnitt 11 (als TODO markiert) |
+| Datenschutzangaben in **App Store** („App-Datenschutz“) und **Google Play** („Datensicherheit“) anpassen: neu erhoben werden Name, E-Mail, optional Telefon und Freitext (ggf. Bestattungswünsche); Zweck: Weiterleitung an den gewählten Bestatter; Weitergabe an Dritte: ja (Bestatter) | Kunde | App Store Connect, Play Console |
+| Kooperationsvertrag mit jedem Bestatter: Klausel **„keine Mehrkosten für Nutzer“** (Rabatt nicht durch Preisaufschlag finanziert) | juristisch, Kunde | Vertrag |
+| Kooperationsvertrag: **monatliche Meldepflicht** für eingelöste Codes und Auftragswerte | juristisch, Kunde | Vertrag; Pflege in `/admin` → „Vermittlungen“ |
+| Kooperationsvertrag: Verwendung der Anfragedaten nur zur Bearbeitung der Anfrage, Löschung nach Zurückziehen, Bestatter als eigener Verantwortlicher | juristisch | Vertrag |
+| **Rechtliche Prüfung des Provisionshinweises** (Wortlaut, Platzierung, UWG/Kennzeichnung). In der App steht er in der Du-Form: „SanusAnkh erhält bei einer Beauftragung eine Vermittlungsprovision vom Bestatter. Für dich entstehen dadurch keine Mehrkosten.“ | juristisch | `src/locales/*.js`, Schlüssel `request.commission` |
+| Einwilligungstext („Ich willige ein, dass meine Angaben an [Bestatter] übermittelt werden.“) und Hinweis zur Widerrufbarkeit | juristisch | Schlüssel `request.consent`, `request.consentHint` |
+| Speicherdauer der Vermittlungsdaten (Code, Bestatter, Leistung, Datum, Status, Auftragswert) festlegen – derzeit unbegrenzt | juristisch, Kunde | Löschregel ggf. nachrüsten |
+| Bestattungswünsche können religiöse Überzeugungen enthalten (Art. 9 DSGVO) – sie werden nur per eigenem Klick angehängt; Einordnung prüfen | juristisch | Datenschutz Abschnitt 11 |
+| Texte der E-Mails an Bestatter und Nutzer prüfen; Nutzer-E-Mail derzeit Deutsch mit kurzem englischem Absatz | Kunde | `netlify/lib/emails.mjs` |
+| Missbrauch: Wer eine fremde E-Mail-Adresse einträgt, löst eine Bestätigungsmail an diese Adresse aus. Schutz derzeit: höchstens 5 Anfragen pro Stunde je Herkunft. Ggf. Bestätigung per E-Mail-Link (Double-Opt-in) ergänzen | Kunde entscheidet | `netlify/functions/requests.mjs` |
+| Umgebungsvariablen in Netlify setzen: `ADMIN_PASSWORD` (mind. 12 Zeichen), `HASH_SECRET`, `BREVO_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME` | Kunde | Netlify → Environment variables; Vorlage `.env.example` |
+| App-Build: `EXPO_PUBLIC_API_URL` ist jetzt die Basisadresse (`https://…/api`) statt der Assistent-Adresse | Entwicklung | `mobile/.env.example`, EAS-Umgebungsvariablen |
+| Vorbereitet, nicht umgesetzt (TODO im Code): mehrere Admin-Konten; eigener Partner-Zugang, über den Bestatter Codes selbst einlösen und Auftragswerte melden | – | `netlify/lib/auth.mjs`, `src/admin/AdminApp.jsx` |

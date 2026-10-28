@@ -35,9 +35,15 @@ Node 20+ (getestet mit Node 24).
 
 Grenzen: Frage max. 1000 Zeichen, Kontext max. 4000, max. 30 Texte à 1000 Zeichen pro Übersetzungsauftrag, nur die 7 Sprachcodes. Übersetzungen werden pro Sprache und Inhalt in `sessionStorage` gecacht.
 
+## Kooperations-Bestatter und Admin-Ansicht
+
+Weitere Serverfunktionen für die Store-App: `partners.mjs` (`/api/partners`), `requests.mjs` (`/api/requests`) und `admin.mjs` (`/api/admin/*`). Daten liegen in Netlify Blobs; der Zugriff ist in `netlify/lib/storage/` gekapselt. Die Admin-Ansicht liegt unter `/admin` (`src/admin/`, eigener Chunk). Ablauf, Datenmodell und Sicherheit: siehe [mobile/README.md](mobile/README.md#kooperations-bestatter-anfragen-und-provisionen).
+
+Umgebungsvariablen (Vorlage `.env.example`): `ADMIN_PASSWORD` (mind. 12 Zeichen), `HASH_SECRET`, `BREVO_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME`. Ohne Brevo-Zugang läuft der Versand im Testbetrieb (nur Protokoll ohne Personendaten). Lokal speichert der Vite-Dev-Server in `.data/` und legt einen Demo-Bestatter an.
+
 ## Deployment (Netlify)
 
-Repository verbinden – `netlify.toml` setzt Build-Befehl, `dist/` und den SPA-Fallback. Danach den API-Key als Umgebungsvariable hinterlegen.
+Repository verbinden – `netlify.toml` setzt Build-Befehl, `dist/` und den SPA-Fallback. Danach die Umgebungsvariablen hinterlegen (API-Key, Admin-Passwort, ggf. Brevo).
 
 ## Vor der Veröffentlichung
 

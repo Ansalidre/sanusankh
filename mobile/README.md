@@ -33,22 +33,22 @@ Optional:
 
 ## Inhalte pflegen (`src/content/`)
 
-Alle Anbieter-, Länder- und Hausapotheken-Daten liegen als JSON-Dateien im Projekt, nicht im Code. Eine Admin-Oberfläche gibt es bewusst nicht. Änderungen erfolgen in der Datei, dann `npm run check:content`, dann ein neuer Build oder ein Update.
+Länder-, Hausapotheken-, Vorsorge- und Sterbegeld-Daten liegen als JSON-Dateien im Projekt, nicht im Code. Änderungen erfolgen in der Datei, dann `npm run check:content`, dann ein neuer Build oder ein Update. **Kooperations-Bestatter** liegen dagegen auf dem Server und werden in der Admin-Ansicht gepflegt (siehe [Kooperations-Bestatter](#kooperations-bestatter-anfragen-und-provisionen)).
 
 | Datei | Inhalt | Wichtige Felder |
 | --- | --- | --- |
 | `countries.json` | Länder (ISO-Code) mit Nummern | `numbers[].kind`: emergency, ambulance, fire, police, oncall, advice, poison (mit `number` oder `regions`), crisis, crisisAlt; optional `taxiShortcode`, `pharmacyDuty` |
 | `medicineCabinet.json` | Hausapotheke je Land (`country: "*"` = alle) | `kind`: supply / medicine, `status`: unreviewed / reviewed, `reviewedBy`, `reviewedAt`, `source` |
 | `careInfo.json` | Vorsorge-Texte je Land und Thema | `topic`: directive / insurance / funeral, `sections`, `links` |
-| `providers.json` | Bestatter und Versicherungen | `type`, `country`, Adresse, `lat`/`lon`, `phone`, `website`, `logo`, `partner`, `contractFrom`/`contractTo`, `priority`, `active`, `tracking` |
+| `providers.json` | Sterbegeld-Anbieter | `type: "insurance"`, `country`, `website`, `logo`, `partner`, `contractFrom`/`contractTo`, `priority`, `active`, `tracking` |
 
 Regeln, die die App und `check:content` durchsetzen:
 
 - **Arzneimittel:** nur als Wirkstoffgruppe bzw. allgemeine Bezeichnung, ohne Dosierung. Das Skript lehnt Mengenangaben wie „500 mg“ oder „3 x täglich“ ab. Jeder Eintrag zeigt in der App „Frag in deiner Apotheke nach dem passenden Präparat. Packungsbeilage beachten.“
 - **Freigabe:** Ein Arzneimittel erscheint im Store-Build erst mit `"status": "reviewed"`, und zwar mit Name der prüfenden Person (`reviewedBy`) und Datum (`reviewedAt`). In Entwicklungs-Builds (Expo Go) sind ungeprüfte Einträge mit dem Hinweis „Ungeprüft“ sichtbar. Hat ein Land keine geprüften Arzneimittel, zeigt die App nur Hilfsmittel und „Länderspezifische Empfehlungen folgen“.
 - **Partner:** Sie werden nur innerhalb des Vertragszeitraums hervorgehoben und immer als „Anzeige“ bzw. „Partnerangebot“ gekennzeichnet. Die Seite „Sterbegeldversicherung“ erscheint nur, wenn das Land mindestens einen aktiven Versicherungspartner hat. `tracking` (z. B. `utm_source=sanusankh`) wird an die Website angehängt und darf keine personenbezogenen Parameter enthalten.
-- **Demo-Einträge:** Einträge mit `"demo": true` erscheinen nur in Entwicklungs-Builds. Die beiden Demo-Anbieter vor dem Start durch echte Partnerdaten ersetzen oder löschen.
-- **Klickzählung:** Ohne eigenen Server werden Partnerklicks nicht gezählt. Auswertung über die `utm`-Parameter in der Statistik des Partners.
+- **Demo-Einträge:** Einträge mit `"demo": true` erscheinen nur in Entwicklungs-Builds. Demo-Anbieter vor dem Start durch echte Partnerdaten ersetzen oder löschen.
+- **Klickzählung:** Partnerklicks werden nicht gezählt. Auswertung über die `utm`-Parameter in der Statistik des Partners.
 
 Alle verwendeten Module sind in Expo Go enthalten – zum Ausprobieren auf dem eigenen Handy ist kein Mac und kein eigener Build nötig. Telefon-Links, Standort, Vibration und Ton funktionieren nur auf einem echten Gerät, nicht im Simulator.
 
@@ -59,12 +59,49 @@ Alle verwendeten Module sind in Expo Go enthalten – zum Ausprobieren auf dem e
 Der API-Key darf nicht in die App (er wäre aus dem App-Paket auslesbar). Die App ruft deshalb die Serverfunktion aus dem Hauptprojekt auf (`../netlify/functions/assistant.mjs`, Pfad `/api/assistant`):
 
 1. Hauptprojekt bei Netlify deployen und dort `ANTHROPIC_API_KEY` als Umgebungsvariable setzen (siehe `../README.md`).
-2. In `mobile/` die Datei `.env.example` nach `.env` kopieren und `EXPO_PUBLIC_API_URL` auf `https://<deine-seite>.netlify.app/api/assistant` setzen.
+2. In `mobile/` die Datei `.env.example` nach `.env` kopieren und `EXPO_PUBLIC_API_URL` auf `https://<deine-seite>.netlify.app/api` setzen (Basisadresse für KI, Bestatter und Anfragen; ältere Werte mit `/assistant` am Ende funktionieren weiter).
 3. Für EAS-Builds dieselbe Variable unter *expo.dev → Projekt → Environment variables* hinterlegen.
 
 Ohne Adresse läuft die App ohne KI: Der Assistent zeigt einen Hinweis; Anleitungen, Symptom-Fragen, Hausapotheke und Vorsorge-Texte erscheinen auf Deutsch. Menüs, Titel, Warnzeichen und Notfallanweisungen sind fest in allen 9 Sprachen hinterlegt und funktionieren auch offline.
 
 An den Server gehen nur die Frage, die Sprache, das Land und ggf. Anleitungstext als Kontext. Notfallpass, Vorsorge-Angaben und Hausapotheke werden nie übertragen. Die KI-Regeln im System-Prompt verbieten Medikamenten- und Dosierungsempfehlungen, Rechts- und Versicherungsberatung sowie Empfehlungen bestimmter Bestatter oder Versicherer.
+
+## Kooperations-Bestatter: Anfragen und Provisionen
+
+Nutzer können bei Kooperations-Bestattern eine Leistung verbindlich anfragen und erhalten einen Rabatt. SanusAnkh erhält pro Beauftragung eine Provision. **Die App wickelt keine Zahlungen ab** – Vertrag und Bezahlung laufen direkt zwischen Nutzer und Bestatter.
+
+**Ablauf in der App** (Vorsorge → Bestatter):
+
+1. In der Umkreissuche erscheinen Kooperations-Bestatter als „Partner – Rabatt über SanusAnkh“.
+2. Detailseite: Rabatt mit Bedingungen, Leistungen mit Richtpreis „ab …“, Kontakt, Karte.
+3. Leistung wählen → Formular (Name, E-Mail, optional Telefon, Wunschtermin, Tageszeit, Nachricht). Bestattungswünsche aus dem Notfallpass nur per eigenem Klick, mit Vorschau.
+4. Einwilligung per Checkbox (nicht vorausgewählt), Provisionshinweis direkt über dem Absenden-Knopf.
+5. Bestätigung mit Code `SA-XXXX-XXXX`; der Nutzer bekommt ihn auch per E-Mail, der Bestatter die Anfrage per E-Mail und/oder Webhook.
+6. „Meine Anfragen“ (Vorsorge) liegt nur auf dem Gerät. Zurückziehen setzt den Status auf „storniert“ und informiert den Bestatter.
+
+Ohne Verbindung zeigt die App die zuletzt geladenen Partnerdaten, Anfragen sind dann gesperrt („Anfrage nur mit Internetverbindung möglich“).
+
+**Server** (Hauptprojekt, `netlify/`):
+
+| Datei | Aufgabe |
+| --- | --- |
+| `functions/partners.mjs` | `GET /api/partners?country=DE` – öffentliche Partnerdaten (ohne Provision, Kontaktweg, Vertrag) |
+| `functions/requests.mjs` | `POST /api/requests`, `POST /api/requests/withdraw` |
+| `functions/admin.mjs` | Admin-Schnittstelle `/api/admin/*` |
+| `lib/storage/` | **einziger** Speicherzugriff (Netlify Blobs; lokal JSON-Dateien in `.data/`). Für eine echte Datenbank nur dieses Modul austauschen. |
+| `lib/model.mjs` | Datenmodell Partner und Vermittlung, Validierung, Provisionsberechnung |
+| `lib/delivery.mjs`, `lib/emails.mjs` | Versand über Brevo und Webhooks, E-Mail-Texte |
+| `lib/auth.mjs` | Admin-Login |
+
+Der Server speichert pro Anfrage nur die **Vermittlung**: Code, Bestatter, Leistung, Datum, Status (angefragt → kontaktiert → beauftragt → abgerechnet / storniert), Auftragswert, Provision, Abrechnungsstatus. Name, Telefon, E-Mail und Nachricht gehen nur in die E-Mails und werden nicht gespeichert, auch nicht im Protokoll. Zurückziehen braucht neben dem Code ein Token, das nur auf dem Gerät liegt – der Bestatter, der den Code ebenfalls kennt, kann eine Anfrage also nicht im Namen des Nutzers stornieren.
+
+**Testbetrieb:** Ohne `BREVO_API_KEY` und `MAIL_FROM` wird nichts versendet; das Protokoll enthält nur Code, Bestatter, Leistung und Zeitstempel. App und Admin-Ansicht zeigen „Testbetrieb“.
+
+**Admin-Ansicht** unter `https://<deine-seite>.netlify.app/admin` (nur Web): Bestatter mit Rabatt, Leistungen, Kontaktweg, Provisionsmodell und Vertrag pflegen; Vermittlungen nach Bestatter, Zeitraum und Status filtern; Status, Auftragswert, Abrechnung und interne Notiz pflegen; Monatsübersicht der Provisionen pro Bestatter mit CSV-Export. Ein Bestatter erscheint in der App nur bei Vertragsstatus „aktiv“ innerhalb der Laufzeit. Die Provision wird nach dem Modell berechnet, das bei der Anfrage galt.
+
+Zugang: ein gemeinsames Passwort (`ADMIN_PASSWORD`, mind. 12 Zeichen) mit zeitkonstantem Vergleich, wachsender Verzögerung nach Fehlversuchen und 15 Minuten Sperre nach 5 Fehlversuchen. Die Sitzung läuft nach 30 Minuten Inaktivität bzw. spätestens nach 8 Stunden ab (HttpOnly-Cookie, `SameSite=Strict`).
+
+**Lokal testen:** Im Hauptprojekt `.env` mit `ADMIN_PASSWORD` anlegen, `npm run dev -- --host` starten (Admin: `http://localhost:5173/admin`, Demo-Bestatter wird automatisch angelegt) und in `mobile/.env` `EXPO_PUBLIC_API_URL=http://<LAN-IP>:5173/api` setzen. Der Demo-Bestatter erscheint nur in Entwicklungs-Builds (Expo Go).
 
 ## Builds und Veröffentlichung (ohne Mac)
 
