@@ -1,0 +1,66 @@
+{
+  "_info": "Texte für den Bereich „Vorsorge“ je Land (country \"*\" = alle Länder). topic: directive | insurance | funeral. Texte auf Deutsch, andere Sprachen per KI-Übersetzung. Links sind Datensätze, nicht Code.",
+  "items": [
+    {
+      "id": "directive-de",
+      "country": "DE",
+      "topic": "directive",
+      "sections": [
+        {
+          "heading": "Patientenverfügung",
+          "text": "In einer Patientenverfügung legst du schriftlich fest, welche ärztlichen Maßnahmen du in bestimmten Situationen wünschst oder ablehnst – für den Fall, dass du deinen Willen selbst nicht mehr äußern kannst."
+        },
+        {
+          "heading": "Vorsorgevollmacht",
+          "text": "Mit einer Vorsorgevollmacht bestimmst du eine oder mehrere Personen deines Vertrauens. Sie dürfen in deinem Namen entscheiden und handeln, wenn du es selbst nicht mehr kannst – zum Beispiel bei Gesundheit, Wohnen oder Geldangelegenheiten."
+        },
+        {
+          "heading": "Betreuungsverfügung",
+          "text": "In einer Betreuungsverfügung hältst du fest, wen das Gericht als rechtliche Betreuung einsetzen soll – oder wen nicht –, falls eine Betreuung nötig wird, und welche Wünsche dabei beachtet werden sollen."
+        },
+        {
+          "heading": "Gut zu wissen",
+          "text": "Bewahre die Unterlagen so auf, dass Angehörige sie im Ernstfall schnell finden. Sprich mit den Personen, die du bevollmächtigst, und mit deiner Hausarztpraxis darüber. Im Notfallpass kannst du festhalten, wo die Unterlagen liegen."
+        }
+      ],
+      "links": [
+        {
+          "label": "Bundesministerium der Justiz: Broschüre und Textbausteine zur Patientenverfügung",
+          "url": "https://www.bmj.de/SharedDocs/Publikationen/DE/Patientenverfuegung.pdf?__blob=publicationFile"
+        },
+        {
+          "label": "Bundesministerium der Justiz: Vorsorgevollmacht",
+          "url": "https://www.bmj.de/DE/Themen/VorsorgeUndBetreuungsrecht/Vorsorgevollmacht/Vorsorgevollmacht_node.html"
+        },
+        {
+          "label": "Bundesministerium der Justiz: Formulare und Muster (auch in anderen Sprachen)",
+          "url": "https://www.bmj.de/DE/Service/Formulare/Formulare_node.html"
+        }
+      ],
+      "source": "Bundesministerium der Justiz",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    },
+    {
+      "id": "insurance-general",
+      "country": "*",
+      "topic": "insurance",
+      "sections": [
+        {
+          "heading": "Was ist eine Sterbegeldversicherung?",
+          "text": "Eine Sterbegeldversicherung zahlt beim Tod der versicherten Person einen vorher vereinbarten Geldbetrag aus. Das Geld ist meist dafür gedacht, die Kosten der Bestattung zu decken und Angehörige finanziell zu entlasten."
+        },
+        {
+          "heading": "Worauf du achten kannst",
+          "text": "Vergleiche die Höhe der Beiträge mit der Versicherungssumme, prüfe, ob es zu Beginn eine Wartezeit gibt, und lies die Bedingungen zur Kündigung. Bei Fragen hilft eine unabhängige Verbraucherberatung."
+        }
+      ],
+      "links": [],
+      "source": "",
+      "status": "unreviewed",
+      "reviewedBy": "",
+      "reviewedAt": ""
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "SanusAnkh",
+    "slug": "sanusankh",
+    "scheme": "sanusankh",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F9FAFB",
+    "ios": {
+      "bundleIdentifier": "de.sanusankh.app",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [
+          "tel"
+        ]
+      }
+    },
+    "android": {
+      "package": "de.sanusankh.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#05080A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "SanusAnkh nutzt deinen Standort nur auf Anfrage, um Apotheken und Kliniken in der Nähe zu finden. Der Standort wird nicht gespeichert."
+        }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "backgroundColor": "#05080A"
+        }
+      ],
+      "expo-web-browser",
+      "@react-native-community/datetimepicker",
+      "expo-asset",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SanusAnkh greift nur auf deine Fotos zu, wenn du ein Foto deiner Patientenverfügung zum Notfallpass hinzufügst. Das Bild bleibt auf deinem Gerät.",
+          "cameraPermission": "SanusAnkh nutzt die Kamera nur, wenn du deine Patientenverfügung für den Notfallpass fotografierst. Das Bild bleibt auf deinem Gerät.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#0C495A"
+        }
+      ]
+    ]
+  }
+}
