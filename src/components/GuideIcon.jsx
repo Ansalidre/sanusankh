@@ -1,0 +1,61 @@
+import {
+  Baby,
+  Bandage,
+  BedSingle,
+  Bone,
+  Brain,
+  Bug,
+  Candy,
+  CircleDot,
+  Droplet,
+  Droplets,
+  Flame,
+  FlaskConical,
+  Heart,
+  HeartHandshake,
+  HeartPulse,
+  PersonStanding,
+  Phone,
+  ShieldAlert,
+  Siren,
+  Snowflake,
+  Stethoscope,
+  Sun,
+  Thermometer,
+  Wind,
+  Zap,
+} from "lucide-react";
+
+const ICONS = {
+  Baby,
+  Bandage,
+  BedSingle,
+  Bone,
+  Brain,
+  Bug,
+  Candy,
+  CircleDot,
+  Droplet,
+  Droplets,
+  Flame,
+  FlaskConical,
+  Heart,
+  HeartHandshake,
+  HeartPulse,
+  PersonStanding,
+  Phone,
+  ShieldAlert,
+  Siren,
+  Snowflake,
+  Stethoscope,
+  Sun,
+  Thermometer,
+  Wind,
+  Zap,
+};
+
+/** Löst einen Icon-Namen aus den Datendateien in eine lucide-Komponente auf. */
+export default function GuideIcon({ name, className = "h-6 w-6", ...props }) {
+  const Icon = ICONS[name] || HeartPulse;
+  return <Icon className={className} aria-hidden="true" {...props} />;
+}
