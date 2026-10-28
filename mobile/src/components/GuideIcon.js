@@ -1,0 +1,63 @@
+import {
+  Ambulance,
+  Baby,
+  Bandage,
+  BedSingle,
+  Bone,
+  Brain,
+  Bug,
+  Candy,
+  CircleDot,
+  Droplet,
+  Droplets,
+  Flame,
+  FlaskConical,
+  Heart,
+  HeartHandshake,
+  HeartPulse,
+  PersonStanding,
+  Phone,
+  ShieldAlert,
+  Siren,
+  Snowflake,
+  Stethoscope,
+  Sun,
+  Thermometer,
+  Wind,
+  Zap,
+} from "lucide-react-native";
+import { Icon } from "@/components/ui/Icon";
+
+const ICONS = {
+  Ambulance,
+  Baby,
+  Bandage,
+  BedSingle,
+  Bone,
+  Brain,
+  Bug,
+  Candy,
+  CircleDot,
+  Droplet,
+  Droplets,
+  Flame,
+  FlaskConical,
+  Heart,
+  HeartHandshake,
+  HeartPulse,
+  PersonStanding,
+  Phone,
+  ShieldAlert,
+  Siren,
+  Snowflake,
+  Stethoscope,
+  Sun,
+  Thermometer,
+  Wind,
+  Zap,
+};
+
+/** Löst einen Icon-Namen aus den Datendateien in eine lucide-Komponente auf. */
+export default function GuideIcon({ name, size = 24, color }) {
+  return <Icon as={ICONS[name] || HeartPulse} size={size} color={color} />;
+}

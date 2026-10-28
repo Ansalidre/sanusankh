@@ -1,0 +1,121 @@
+{
+  "_info": "Länderkonfiguration (ISO 3166-1 alpha-2). Bezeichnungen der Nummern kommen aus den Sprachdateien (num.<kind>). Felder und Pflege: siehe mobile/README.md → Inhalte pflegen. reviewed=false: fachliche Prüfung der Nummern steht aus.",
+  "defaultCountry": "DE",
+  "fallbackEmergency": "112",
+  "countries": [
+    {
+      "code": "DE",
+      "flag": "🇩🇪",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "oncall", "number": "116117" },
+        { "kind": "police", "number": "110" },
+        {
+          "kind": "poison",
+          "regions": [
+            { "region": "Baden-Württemberg", "city": "Freiburg", "phone": "0761 19240" },
+            { "region": "Bayern", "city": "München", "phone": "089 19240" },
+            { "region": "Berlin", "city": "Berlin", "phone": "030 19240" },
+            { "region": "Brandenburg", "city": "Berlin", "phone": "030 19240" },
+            { "region": "Bremen", "city": "Göttingen", "phone": "0551 19240" },
+            { "region": "Hamburg", "city": "Göttingen", "phone": "0551 19240" },
+            { "region": "Hessen", "city": "Mainz", "phone": "06131 19240" },
+            { "region": "Mecklenburg-Vorpommern", "city": "Erfurt", "phone": "0361 730730" },
+            { "region": "Niedersachsen", "city": "Göttingen", "phone": "0551 19240" },
+            { "region": "Nordrhein-Westfalen", "city": "Bonn", "phone": "0228 19240" },
+            { "region": "Rheinland-Pfalz", "city": "Mainz", "phone": "06131 19240" },
+            { "region": "Saarland", "city": "Homburg", "phone": "06841 19240" },
+            { "region": "Sachsen", "city": "Erfurt", "phone": "0361 730730" },
+            { "region": "Sachsen-Anhalt", "city": "Erfurt", "phone": "0361 730730" },
+            { "region": "Schleswig-Holstein", "city": "Göttingen", "phone": "0551 19240" },
+            { "region": "Thüringen", "city": "Erfurt", "phone": "0361 730730" }
+          ]
+        },
+        { "kind": "crisis", "number": "116123", "name": "Telefonseelsorge" },
+        { "kind": "crisisAlt", "number": "0800 111 0 111", "name": "Telefonseelsorge" }
+      ],
+      "taxiShortcode": "22456",
+      "pharmacyDuty": { "url": "https://www.aponet.de/apotheke/notdienstsuche", "phone": "0800 00 22 8 33" }
+    },
+    {
+      "code": "AT",
+      "flag": "🇦🇹",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "ambulance", "number": "144" },
+        { "kind": "fire", "number": "122" },
+        { "kind": "police", "number": "133" },
+        { "kind": "advice", "number": "1450" },
+        { "kind": "poison", "number": "+43 1 406 43 43" },
+        { "kind": "crisis", "number": "142", "name": "Telefonseelsorge" }
+      ],
+      "pharmacyDuty": { "phone": "1455" }
+    },
+    {
+      "code": "CH",
+      "flag": "🇨🇭",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "ambulance", "number": "144" },
+        { "kind": "fire", "number": "118" },
+        { "kind": "police", "number": "117" },
+        { "kind": "poison", "number": "145" },
+        { "kind": "crisis", "number": "143", "name": "Die Dargebotene Hand" }
+      ]
+    },
+    {
+      "code": "IT",
+      "flag": "🇮🇹",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "ambulance", "number": "118" },
+        { "kind": "fire", "number": "115" },
+        { "kind": "police", "number": "113" }
+      ]
+    },
+    {
+      "code": "FR",
+      "flag": "🇫🇷",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "ambulance", "number": "15" },
+        { "kind": "fire", "number": "18" },
+        { "kind": "police", "number": "17" },
+        { "kind": "crisis", "number": "3114" }
+      ]
+    },
+    {
+      "code": "TR",
+      "flag": "🇹🇷",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "poison", "number": "114" }
+      ]
+    },
+    {
+      "code": "PL",
+      "flag": "🇵🇱",
+      "reviewed": false,
+      "emergency": "112",
+      "numbers": [
+        { "kind": "emergency", "number": "112" },
+        { "kind": "ambulance", "number": "999" },
+        { "kind": "fire", "number": "998" },
+        { "kind": "police", "number": "997" },
+        { "kind": "crisis", "number": "116 123" }
+      ]
+    }
+  ]
+}
