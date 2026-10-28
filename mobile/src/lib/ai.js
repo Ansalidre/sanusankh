@@ -1,37 +1,15 @@
 /*
- * Client für die Serverfunktion (netlify/functions/assistant.mjs im Hauptprojekt).
- * Adresse über EXPO_PUBLIC_API_URL; ohne Adresse werfen alle Funktionen – die Aufrufer zeigen dann den deutschen Text.
+ * Client für die KI-Serverfunktion (netlify/functions/assistant.mjs im Hauptprojekt).
+ * Ohne EXPO_PUBLIC_API_URL werfen alle Funktionen – die Aufrufer zeigen dann den deutschen Text.
  * Übersetzungen werden pro Sprache und Inhalt für die Dauer der App-Sitzung im Arbeitsspeicher gecacht.
  */
+import { api } from "@/lib/api";
 
-const ENDPOINT = process.env.EXPO_PUBLIC_API_URL || "";
 const MAX_TEXTS = 30;
 const TIMEOUT_MS = 45000;
 
-export const aiAvailable = Boolean(ENDPOINT);
-
-async function post(body) {
-  if (!ENDPOINT) throw new Error("no_endpoint");
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-  try {
-    const res = await fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-    let data = null;
-    try {
-      data = await res.json();
-    } catch {
-      // leere oder ungültige Antwort
-    }
-    if (!res.ok || !data) throw new Error(data?.error || `HTTP ${res.status}`);
-    return data;
-  } finally {
-    clearTimeout(timer);
-  }
+function post(body) {
+  return api("/assistant", { method: "POST", body, timeout: TIMEOUT_MS });
 }
 
 export async function askAssistant({ question, language, country, context }) {
@@ -131,6 +109,17 @@ export function translateCare(info, lang) {
       [s, "text"],
     ]),
     ...(i.links || []).map((l) => [l, "label"]),
+  ]);
+}
+
+/** Leistungen und Rabattbedingungen eines Kooperations-Bestatters. */
+export function translatePartner(partner, lang) {
+  return translateObject("partner", `${partner.id}.${partner.fetchedAt || ""}`, partner, lang, (p) => [
+    ...(p.discount ? [[p.discount, "conditions"]] : []),
+    ...(p.services || []).flatMap((s) => [
+      [s, "title"],
+      [s, "description"],
+    ]),
   ]);
 }
 

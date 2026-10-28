@@ -13,13 +13,15 @@ const DEFAULT_DATE = new Date(1980, 0, 1);
 
 /**
  * Datumsfeld mit nativem Datumswähler. Wert als "YYYY-MM-DD" oder "".
- * `future` erlaubt Daten nach heute (z. B. Haltbarkeit) statt nur vergangener (Geburtsdatum).
+ * `future` erlaubt Daten nach heute (z. B. Haltbarkeit) statt nur vergangener (Geburtsdatum);
+ * `notPast` lässt zusätzlich keine Daten vor heute zu (z. B. Wunschtermin).
  */
-export function DateField({ label, value, onChange, future = false }) {
+export function DateField({ label, value, onChange, future = false, notPast = false }) {
   const { t, lang } = useI18n();
   const [iosOpen, setIosOpen] = useState(false);
   const current = value ? new Date(`${value}T00:00:00`) : future ? new Date() : DEFAULT_DATE;
   const maximumDate = future ? undefined : new Date();
+  const minimumDate = notPast ? new Date() : undefined;
 
   const open = () => {
     if (Platform.OS === "android") {
@@ -27,6 +29,7 @@ export function DateField({ label, value, onChange, future = false }) {
         value: current,
         mode: "date",
         maximumDate,
+        minimumDate,
         onChange: (event, date) => {
           if (event.type === "set" && date) onChange(toIsoDate(date));
         },
@@ -58,6 +61,7 @@ export function DateField({ label, value, onChange, future = false }) {
             mode="date"
             display="spinner"
             maximumDate={maximumDate}
+            minimumDate={minimumDate}
             locale={lang}
             onChange={(_, date) => date && onChange(toIsoDate(date))}
           />

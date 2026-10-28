@@ -1,5 +1,5 @@
 {
-  "_info": "Anbieter (Bestatter und Versicherungen). type: funeral | insurance. partner=true wird als „Anzeige“/„Partnerangebot“ gekennzeichnet und nur im Vertragszeitraum (contractFrom–contractTo) hervorgehoben. tracking wird an die Website angehängt. demo=true erscheint nur in Entwicklungs-Builds – vor dem Start durch echte Partnerdaten ersetzen.",
+  "_info": "Sterbegeld-Anbieter (type: insurance). partner=true wird als „Partnerangebot“ gekennzeichnet und nur im Vertragszeitraum (contractFrom–contractTo) gezeigt. tracking wird an die Website angehängt. demo=true erscheint nur in Entwicklungs-Builds – vor dem Start durch echte Partnerdaten ersetzen. Kooperations-Bestatter (Rabatt, Leistungen, Anfragen, Provision) liegen NICHT hier, sondern auf dem Server und werden in der Admin-Ansicht /admin gepflegt.",
   "providers": [
     {
       "id": "demo-insurance-1",
@@ -18,25 +18,6 @@
       "priority": 1,
       "active": true,
       "tracking": "utm_source=sanusankh&utm_medium=app&utm_campaign=vorsorge",
-      "demo": true
-    },
-    {
-      "id": "demo-funeral-1",
-      "name": "Muster-Bestattungen (Demo)",
-      "type": "funeral",
-      "country": "DE",
-      "address": "Musterstraße 1, 10115 Berlin",
-      "lat": 52.532,
-      "lon": 13.384,
-      "phone": "",
-      "website": "https://example.com/bestattungen",
-      "logo": "",
-      "partner": true,
-      "contractFrom": "2026-01-01",
-      "contractTo": "2027-12-31",
-      "priority": 1,
-      "active": true,
-      "tracking": "utm_source=sanusankh&utm_medium=app&utm_campaign=bestatter",
       "demo": true
     }
   ]

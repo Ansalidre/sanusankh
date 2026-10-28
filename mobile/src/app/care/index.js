@@ -1,6 +1,7 @@
+import { useCallback, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-import { ChevronRight, FileSignature, Flower2, Leaf, Lock, Umbrella } from "lucide-react-native";
+import { router, useFocusEffect } from "expo-router";
+import { ChevronRight, FileSignature, Flower2, Inbox, Leaf, Lock, Umbrella } from "lucide-react-native";
 import IconBubble from "@/components/IconBubble";
 import LegalNote from "@/components/LegalNote";
 import Screen from "@/components/Screen";
@@ -9,6 +10,7 @@ import { Icon } from "@/components/ui/Icon";
 import { H1, Muted, T } from "@/components/ui/Text";
 import { hasInsurancePartner } from "@/lib/content";
 import { useI18n } from "@/lib/i18n";
+import { requestStore } from "@/lib/storage";
 import { colors } from "@/lib/theme";
 
 const CALM = colors.calm;
@@ -39,6 +41,8 @@ function CareLink({ icon, title, subtitle, to }) {
  */
 export default function Care() {
   const { t, country } = useI18n();
+  const [hasRequests, setHasRequests] = useState(false);
+  useFocusEffect(useCallback(() => setHasRequests(requestStore.list().length > 0), []));
   return (
     <Screen title={t("care.title")} emergencyBar={false}>
       <View style={styles.intro}>
@@ -50,6 +54,7 @@ export default function Care() {
       <View style={styles.gap}>
         <CareLink icon={FileSignature} title={t("care.directive")} subtitle={t("care.directiveSub")} to="/care/directive" />
         <CareLink icon={Flower2} title={t("care.funeral")} subtitle={t("care.funeralSub")} to="/care/funeral" />
+        {hasRequests && <CareLink icon={Inbox} title={t("requests.title")} subtitle={t("requests.sub")} to="/care/requests" />}
         {hasInsurancePartner(country.code) && (
           <CareLink icon={Umbrella} title={t("care.insurance")} subtitle={t("care.insuranceSub")} to="/care/insurance" />
         )}

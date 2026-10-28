@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { H2, Muted, T } from "@/components/ui/Text";
 import { TextField } from "@/components/ui/TextField";
-import { isActivePartner, providersFor, providerUrl } from "@/lib/content";
 import { distanceKm, findNearby, geocodePlace, getPosition } from "@/lib/geo";
 import { useI18n } from "@/lib/i18n";
+import { discountLabel, loadPartners } from "@/lib/partners";
 import { colors } from "@/lib/theme";
 
 const ERROR_KEYS = {
@@ -26,10 +26,13 @@ const ERROR_KEYS = {
 };
 const PARTNER_RADIUS_KM = 50;
 
-/** Partner aus providers.json in der Nähe – gekennzeichnet als „Anzeige“. */
-function partnersNear(countryCode, origin, adLabel) {
-  return providersFor(countryCode, "funeral")
-    .filter((p) => isActivePartner(p) && p.lat != null && p.lon != null)
+/**
+ * Kooperations-Bestatter (vom Server, siehe lib/partners.js) im Umkreis – gekennzeichnet als
+ * „Partner – Rabatt über SanusAnkh“; die Detailseite zeigt Leistungen, Rabatt und die Anfrage.
+ */
+function partnersNear(partners, origin, t, lang) {
+  return partners
+    .filter((p) => p.lat != null && p.lon != null)
     .map((p) => ({
       id: `partner/${p.id}`,
       name: p.name,
@@ -37,16 +40,20 @@ function partnersNear(countryCode, origin, adLabel) {
       lon: p.lon,
       address: p.address,
       phone: p.phone,
-      website: providerUrl(p),
-      badge: adLabel,
+      website: p.website,
+      badge: t("partner.discountBadge"),
+      highlight: discountLabel(p.discount, p.currency, t, lang),
+      openLabel: t("partner.showDetails"),
+      onOpen: () => router.push(`/care/partner/${encodeURIComponent(p.id)}`),
       distanceKm: distanceKm(origin, { lat: p.lat, lon: p.lon }),
     }))
-    .filter((p) => p.distanceKm <= PARTNER_RADIUS_KM);
+    .filter((p) => p.distanceKm <= PARTNER_RADIUS_KM)
+    .sort((a, b) => a.distanceKm - b.distanceKm);
 }
 
 /** Bestatter in der Nähe – über den Gerätestandort oder einen eingegebenen Ort / eine PLZ. */
 export default function Funeral() {
-  const { t, country } = useI18n();
+  const { t, lang, country } = useI18n();
   const [place, setPlace] = useState("");
   const [state, setState] = useState({ status: "idle" });
 
@@ -54,9 +61,18 @@ export default function Funeral() {
     try {
       setState({ status: "searching" });
       const origin = await locate();
-      const osm = await findNearby("funeral", origin);
-      const partners = partnersNear(country.code, origin, t("partner.ad"));
-      setState({ status: osm.length || partners.length ? "done" : "empty", origin, osm, partners });
+      let osmError = null;
+      const [osm, partnerData] = await Promise.all([
+        findNearby("funeral", origin).catch((error) => {
+          osmError = error;
+          return [];
+        }),
+        loadPartners(country.code),
+      ]);
+      const partners = partnersNear(partnerData.partners, origin, t, lang);
+      // Ohne Verbindung: gespeicherte Partner trotzdem zeigen (Anfragen sind dann gesperrt).
+      if (osmError && !partners.length) throw osmError;
+      setState({ status: osm.length || partners.length ? "done" : "empty", origin, osm, partners, osmError: Boolean(osmError) });
     } catch (error) {
       setState({ status: "error", code: error.code || "network" });
     }
@@ -114,7 +130,11 @@ export default function Funeral() {
           )}
           <View style={styles.small}>
             <H2>{t("funeral.nearby")}</H2>
-            <Muted size="sm">{t("common.results", { n: state.osm.length })}</Muted>
+            {state.osmError ? (
+              <Notice>{t("common.netError")}</Notice>
+            ) : (
+              <Muted size="sm">{t("common.results", { n: state.osm.length })}</Muted>
+            )}
             <PlaceList places={state.osm} />
           </View>
         </View>

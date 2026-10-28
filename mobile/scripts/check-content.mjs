@@ -78,14 +78,12 @@ for (const p of load("providers.json").providers) {
   const where = `providers/${p.id}`;
   if (!p.id || providerIds.has(p.id)) fail(where, "id fehlt oder ist doppelt");
   providerIds.add(p.id);
-  if (!["funeral", "insurance"].includes(p.type)) fail(where, 'type muss "funeral" oder "insurance" sein');
+  // Kooperations-Bestatter liegen auf dem Server (Admin-Ansicht), nicht in dieser Datei.
+  if (p.type !== "insurance") fail(where, 'type muss "insurance" sein – Bestatter werden in der Admin-Ansicht gepflegt');
   if (!codes.has(p.country)) fail(where, `unbekanntes Land "${p.country}"`);
   if (!p.name?.trim()) fail(where, "name fehlt");
   if (p.website && !isHttps(p.website)) fail(where, "website muss mit https:// beginnen");
   if (p.logo && !isHttps(p.logo)) fail(where, "logo muss eine https-Adresse sein");
-  if (p.type === "funeral" && p.partner && (typeof p.lat !== "number" || typeof p.lon !== "number")) {
-    fail(where, "Bestatter-Partner brauchen Koordinaten (lat/lon), sonst erscheinen sie in keiner Umkreissuche");
-  }
   if (p.partner) {
     if (!isDate(p.contractFrom) || !isDate(p.contractTo)) fail(where, "Partner: contractFrom/contractTo (YYYY-MM-DD) fehlen");
     else if (p.contractFrom > p.contractTo) fail(where, "contractFrom liegt nach contractTo");

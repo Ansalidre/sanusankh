@@ -6,7 +6,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NS = "sanusankh.v1";
-const KEYS = ["prefs", "profiles", "history", "cabinet"];
+const KEYS = ["prefs", "profiles", "history", "cabinet", "partners", "requests"];
 const MAX_HISTORY = 100;
 
 const cache = {};
@@ -92,6 +92,49 @@ export const cabinetStore = {
     const next = { ...all, [id]: { ...all[id], ...patch } };
     write("cabinet", next);
     return next;
+  },
+};
+
+/** Zwischenspeicher der Kooperations-Bestatter je Land: { [country]: { fetchedAt, partners } }. */
+export const partnerCache = {
+  get(country) {
+    const all = read("partners", {});
+    return all && typeof all === "object" ? all[country] || null : null;
+  },
+  set(country, partners) {
+    const entry = { fetchedAt: new Date().toISOString(), partners };
+    write("partners", { ...read("partners", {}), [country]: entry });
+    return entry;
+  },
+};
+
+/**
+ * Eigene Anfragen bei Bestattern – nur auf dem Gerät, der Server kennt keine Nutzerdaten:
+ * [{ code, withdrawToken, partnerId, partnerName, partnerPhone, serviceTitle, createdAt, status }]
+ */
+export const requestStore = {
+  list() {
+    const list = read("requests", []);
+    return Array.isArray(list) ? list : [];
+  },
+  get(code) {
+    return requestStore.list().find((r) => r.code === code) || null;
+  },
+  add(entry) {
+    write("requests", [entry, ...requestStore.list()]);
+    return entry;
+  },
+  update(code, patch) {
+    write(
+      "requests",
+      requestStore.list().map((r) => (r.code === code ? { ...r, ...patch } : r)),
+    );
+  },
+  remove(code) {
+    write(
+      "requests",
+      requestStore.list().filter((r) => r.code !== code),
+    );
   },
 };
 

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Clock, Globe, MapPin, Navigation, Phone } from "lucide-react-native";
+import { ChevronRight, Clock, Globe, MapPin, Navigation, Phone, Tag } from "lucide-react-native";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -35,6 +35,14 @@ export default function PlaceList({ places, emergencyLabel }) {
               </View>
               {place.emergency && emergencyLabel && <Badge variant="emergency" label={emergencyLabel} />}
               {place.badge ? <Badge label={place.badge} style={styles.adBadge} /> : null}
+              {place.highlight ? (
+                <View style={styles.inline}>
+                  <Icon as={Tag} size={16} color={colors.ampel.gruen.main} />
+                  <T size="sm" weight="semibold" color={colors.ampel.gruen.main} style={styles.flex}>
+                    {place.highlight}
+                  </T>
+                </View>
+              ) : null}
               {place.address ? <Muted size="sm">{place.address}</Muted> : null}
               {place.openingHours ? (
                 <View style={styles.inline} accessible accessibilityLabel={`${t("common.hours")}: ${place.openingHours}`}>
@@ -46,8 +54,10 @@ export default function PlaceList({ places, emergencyLabel }) {
               ) : null}
             </View>
           </View>
+          {place.onOpen ? <Button icon={ChevronRight} flipIcon label={place.openLabel} onPress={place.onOpen} /> : null}
           <View style={styles.actions}>
             <Button
+              variant={place.onOpen ? "outline" : "default"}
               icon={Navigation}
               label={t("common.route")}
               accessibilityHint={t("common.externalLink")}
