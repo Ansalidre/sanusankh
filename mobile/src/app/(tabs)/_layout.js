@@ -1,19 +1,19 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Tabs } from "expo-router";
-import { Activity, BookOpen, Ellipsis, House, IdCard } from "lucide-react-native";
+import { BookOpen, Ellipsis, House, IdCard, Siren } from "lucide-react-native";
 import { T } from "@/components/ui/Text";
 import { useI18n } from "@/lib/i18n";
 import { colors } from "@/lib/theme";
 
 const TABS = [
   { name: "index", key: "nav.home", icon: House },
-  { name: "triage", key: "nav.triage", icon: Activity },
+  { name: "emergency", key: "nav.emergency", icon: Siren },
   { name: "guides", key: "nav.guides", icon: BookOpen },
   { name: "pass", key: "nav.pass", icon: IdCard },
   { name: "more", key: "nav.more", icon: Ellipsis },
 ];
 
-/** Beschriftung bis zu zwei Zeilen, damit „Symptom-Check“ & Co. bei 375 px nicht abgeschnitten werden. */
+/** Beschriftung bis zu zwei Zeilen, damit längere Übersetzungen bei 375 px nicht abgeschnitten werden. */
 function TabLabel({ color, children }) {
   return (
     <T

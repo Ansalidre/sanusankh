@@ -9,7 +9,6 @@ import {
   ChevronRight,
   FileText,
   Globe,
-  History as HistoryIcon,
   Hospital,
   Info,
   Languages,
@@ -90,7 +89,6 @@ export default function More() {
         <LinkRow to="/transport" icon={Car} label={t("transport.title")} />
         <LinkRow to="/cabinet" icon={BriefcaseMedical} label={t("cabinet.title")} />
         <LinkRow to="/care" icon={Leaf} label={t("care.title")} />
-        <LinkRow to="/history" icon={HistoryIcon} label={t("settings.history")} />
       </Card>
 
       <View style={styles.gap}>

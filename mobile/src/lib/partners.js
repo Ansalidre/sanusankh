@@ -13,7 +13,7 @@ import { partnerCache, requestStore } from "@/lib/storage";
 export async function loadPartners(country) {
   try {
     const data = await api(`/partners?country=${encodeURIComponent(country)}`);
-    // Demo-Einträge nur in Entwicklungs-Builds (wie bei providers.json)
+    // Demo-Einträge nur in Entwicklungs-Builds
     const list = (Array.isArray(data.partners) ? data.partners : []).filter((p) => !p.demo || __DEV__);
     const entry = partnerCache.set(country, list);
     return { partners: list, fetchedAt: entry.fetchedAt, live: true };

@@ -1,9 +1,10 @@
-// Prüft die gepflegten Inhalte in src/content/*.json (Länder, Hausapotheke, Vorsorge, Anbieter).
+// Prüft die gepflegten Inhalte in src/content/*.json (Länder, Hausapotheke, Vorsorge) und die Erste-Hilfe-Themen.
 // Aufruf: npm run check:content – vor jedem Build bzw. nach jeder Inhaltsänderung.
 import { readFileSync } from "node:fs";
 
 const load = (name) => JSON.parse(readFileSync(new URL(`../src/content/${name}`, import.meta.url), "utf8"));
 const de = readFileSync(new URL("../src/locales/de.js", import.meta.url), "utf8");
+const guides = readFileSync(new URL("../src/data/firstAidGuides.js", import.meta.url), "utf8");
 
 let problems = 0;
 const fail = (where, msg) => {
@@ -11,11 +12,10 @@ const fail = (where, msg) => {
   problems++;
 };
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const isDate = (v) => ISO_DATE.test(v) && !Number.isNaN(Date.parse(v));
 const isHttps = (v) => /^https:\/\/[^\s]+$/.test(v);
-// Dosierungen und Einnahmeanweisungen sind in der Hausapotheke nicht erlaubt.
-const DOSAGE = /\d+(?:[.,]\d+)?\s*(?:mg|µg|mcg|g|ml|i\.?\s?e\.?|tabletten?|kapseln?|tropfen|stück)\b|\b(?:mal|x)\s+(?:täglich|pro tag)|\bdosis\b|\bdosierung\b/i;
+// Die Hausapotheke enthält keine Arzneimittel, Dosierungen oder Anwendungshinweise.
+const MEDICAL = /\d+(?:[.,]\d+)?\s*(?:mg|µg|mcg|g|ml|i\.?\s?e\.?|tabletten?|kapseln?|tropfen|stück)\b|\b(?:mal|x)\s+(?:täglich|pro tag)|\bdosis\b|\bdosierung\b|\bmittel gegen\b|\barznei|\bmedikament|\bwirkstoff/i;
+const ORGS = ["drk", "johanniter", "malteser"];
 
 // --- Länder ---
 const countryData = load("countries.json");
@@ -39,15 +39,6 @@ if (!codes.has(countryData.defaultCountry)) fail("countries", "defaultCountry is
 
 const knownCountry = (code) => code === "*" || codes.has(code);
 
-// gemeinsame Prüfung für den Freigabestatus
-function checkReview(where, item) {
-  if (!["reviewed", "unreviewed"].includes(item.status)) fail(where, 'status muss "reviewed" oder "unreviewed" sein');
-  if (item.status === "reviewed") {
-    if (!item.reviewedBy?.trim()) fail(where, "geprüft, aber reviewedBy (Name der prüfenden Person) fehlt");
-    if (!isDate(item.reviewedAt)) fail(where, "geprüft, aber reviewedAt ist kein Datum (YYYY-MM-DD)");
-  }
-}
-
 // --- Hausapotheke ---
 const ids = new Set();
 for (const item of load("medicineCabinet.json").items) {
@@ -55,11 +46,9 @@ for (const item of load("medicineCabinet.json").items) {
   if (!item.id || ids.has(item.id)) fail(where, "id fehlt oder ist doppelt");
   ids.add(item.id);
   if (!knownCountry(item.country)) fail(where, `unbekanntes Land "${item.country}"`);
-  if (!["supply", "medicine"].includes(item.kind)) fail(where, 'kind muss "supply" oder "medicine" sein');
+  if (item.kind !== "supply") fail(where, 'kind muss "supply" sein – Arzneimittel gehören nicht in die Checkliste');
   if (!item.title?.trim() || !item.description?.trim()) fail(where, "title/description fehlt");
-  if (item.kind === "medicine" && item.country === "*") fail(where, "Arzneimittel immer länderspezifisch eintragen, nicht für alle Länder");
-  if (DOSAGE.test(`${item.title} ${item.description}`)) fail(where, "enthält eine Dosierung/Einnahmeanweisung – nicht erlaubt");
-  checkReview(where, item);
+  if (MEDICAL.test(`${item.title} ${item.description}`)) fail(where, "enthält Arzneimittel, Dosierung oder Anwendungshinweis – nicht erlaubt");
 }
 
 // --- Vorsorge ---
@@ -69,31 +58,21 @@ for (const item of load("careInfo.json").items) {
   if (!["directive", "insurance", "funeral"].includes(item.topic)) fail(where, `unbekanntes topic "${item.topic}"`);
   if (!item.sections?.length) fail(where, "sections fehlt");
   for (const l of item.links || []) if (!l.label || !isHttps(l.url)) fail(where, `Link ungültig: ${l.url}`);
-  checkReview(where, item);
 }
 
-// --- Anbieter ---
-const providerIds = new Set();
-for (const p of load("providers.json").providers) {
-  const where = `providers/${p.id}`;
-  if (!p.id || providerIds.has(p.id)) fail(where, "id fehlt oder ist doppelt");
-  providerIds.add(p.id);
-  // Kooperations-Bestatter liegen auf dem Server (Admin-Ansicht), nicht in dieser Datei.
-  if (p.type !== "insurance") fail(where, 'type muss "insurance" sein – Bestatter werden in der Admin-Ansicht gepflegt');
-  if (!codes.has(p.country)) fail(where, `unbekanntes Land "${p.country}"`);
-  if (!p.name?.trim()) fail(where, "name fehlt");
-  if (p.website && !isHttps(p.website)) fail(where, "website muss mit https:// beginnen");
-  if (p.logo && !isHttps(p.logo)) fail(where, "logo muss eine https-Adresse sein");
-  if (p.partner) {
-    if (!isDate(p.contractFrom) || !isDate(p.contractTo)) fail(where, "Partner: contractFrom/contractTo (YYYY-MM-DD) fehlen");
-    else if (p.contractFrom > p.contractTo) fail(where, "contractFrom liegt nach contractTo");
+// --- Erste-Hilfe-Themen: nur Links auf anerkannte Hilfsorganisationen ---
+let topics = 0;
+for (const m of guides.matchAll(/slug: "([^"]+)"[\s\S]*?links: \[([^\]]*)\]/g)) {
+  topics++;
+  const links = [...m[2].matchAll(/org: "([^"]+)", url: "([^"]+)"/g)];
+  if (!links.length) fail(`guides/${m[1]}`, "keine Links");
+  for (const [, org, url] of links) {
+    if (!ORGS.includes(org)) fail(`guides/${m[1]}`, `unbekannte Organisation "${org}"`);
+    if (!isHttps(url)) fail(`guides/${m[1]}`, `Link ungültig: ${url}`);
   }
-  if (p.tracking && /(?:^|&)(?:email|mail|name|phone|tel|user|uid|id)=/i.test(p.tracking)) {
-    fail(where, "tracking darf keine personenbezogenen Parameter enthalten");
-  }
-  if (p.demo) console.warn(`[${where}] Hinweis: Demo-Eintrag – erscheint nur in Entwicklungs-Builds`);
 }
+if (/\bsteps\s*:/.test(guides)) fail("guides", "eigene Anleitungsschritte (steps) sind nicht erlaubt");
 
-console.log(`${codes.size} Länder, ${ids.size} Hausapotheken-Einträge, ${providerIds.size} Anbieter geprüft.`);
+console.log(`${codes.size} Länder, ${ids.size} Hausapotheken-Einträge, ${topics} Erste-Hilfe-Themen geprüft.`);
 console.log(`${problems} Probleme.`);
 process.exit(problems ? 1 : 0);

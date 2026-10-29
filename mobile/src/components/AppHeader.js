@@ -8,7 +8,7 @@ import { T } from "@/components/ui/Text";
 import { useI18n } from "@/lib/i18n";
 import { colors } from "@/lib/theme";
 
-/** Kopf der Tab-Seiten: Marke, Sprachwahl und (außer im Symptom-Check) die feste 112-Leiste. */
+/** Kopf der Tab-Seiten: Marke, Sprachwahl und (außer auf der Notfall-Seite mit eigenem 112-Knopf) die feste 112-Leiste. */
 export default function AppHeader({ emergencyBar = true }) {
   const { t } = useI18n();
   const insets = useSafeAreaInsets();
