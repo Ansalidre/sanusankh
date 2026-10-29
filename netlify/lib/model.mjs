@@ -46,10 +46,12 @@ function str(value, max) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
-function num(value) {
+/** Zahl aus der Admin-Ansicht (Komma oder Punkt), gerundet auf `decimals` Stellen; Beträge 2, Koordinaten 6. */
+function num(value, decimals = 2) {
   if (value === "" || value == null) return null;
   const n = typeof value === "number" ? value : Number(String(value).replace(",", "."));
-  return Number.isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+  const factor = 10 ** decimals;
+  return Number.isFinite(n) ? Math.round(n * factor) / factor : NaN;
 }
 
 function date(value) {
@@ -83,8 +85,9 @@ export function normalizePartner(input) {
   const country = COUNTRIES.includes(p.country) ? p.country : null;
   if (!country) err("country", "unbekanntes Land");
 
-  const lat = num(p.lat);
-  const lon = num(p.lon);
+  // 6 Nachkommastellen ≈ 0,1 m – Standort des Bestatters, nicht des Nutzers.
+  const lat = num(p.lat, 6);
+  const lon = num(p.lon, 6);
   if ((lat == null) !== (lon == null) || Number.isNaN(lat) || Number.isNaN(lon) || (lat != null && (Math.abs(lat) > 90 || Math.abs(lon) > 180))) {
     err("lat/lon", "beide Koordinaten angeben (Dezimalgrad)");
   }
