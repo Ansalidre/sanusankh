@@ -28,7 +28,8 @@ const PARTNER_RADIUS_KM = 50;
 
 /**
  * Kooperations-Bestatter (vom Server, siehe lib/partners.js) im Umkreis – gekennzeichnet als
- * „Partner – Rabatt über SanusAnkh“; die Detailseite zeigt Leistungen, Rabatt und die Anfrage.
+ * „Über SanusAnkh anfragen“; die Detailseite zeigt Leistungen, Rabatt und die Anfrage. Nur Bestatter mit
+ * Provisionsvereinbarung (`commission: true`) heißen „Partner von SanusAnkh“ und bekommen den Provisionshinweis.
  */
 function partnersNear(partners, origin, t, lang) {
   return partners
@@ -41,8 +42,9 @@ function partnersNear(partners, origin, t, lang) {
       address: p.address,
       phone: p.phone,
       website: p.website,
-      badge: t("partner.discountBadge"),
+      badge: t(p.commission === true ? "partner.partnerBadge" : "partner.requestBadge"),
       highlight: discountLabel(p.discount, p.currency, t, lang),
+      commission: p.commission === true,
       openLabel: t("partner.showDetails"),
       onOpen: () => router.push(`/care/partner/${encodeURIComponent(p.id)}`),
       distanceKm: distanceKm(origin, { lat: p.lat, lon: p.lon }),
@@ -124,7 +126,9 @@ export default function Funeral() {
           {state.partners.length > 0 && (
             <View style={styles.small}>
               <H2>{t("partner.section")}</H2>
-              <Muted size="sm">{t("partner.note")}</Muted>
+              <Muted size="sm">
+                {state.partners.some((p) => p.commission) ? `${t("partner.note")} ${t("partner.commissionNote")}` : t("partner.note")}
+              </Muted>
               <PlaceList places={state.partners} />
             </View>
           )}

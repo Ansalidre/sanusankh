@@ -12,10 +12,10 @@ function post(body) {
   return api("/assistant", { method: "POST", body, timeout: TIMEOUT_MS });
 }
 
-export async function askAssistant({ question, language, country, context }) {
-  const data = await post({ mode: "ask", question: String(question).slice(0, 1000), language, country, context });
+export async function askAssistant({ question, language, country }) {
+  const data = await post({ mode: "ask", question: String(question).slice(0, 1000), language, country });
   if (typeof data.answer !== "string") throw new Error("invalid_response");
-  return { answer: data.answer, urgent: data.urgent === true };
+  return { answer: data.answer };
 }
 
 export async function translateTexts(texts, language) {
@@ -63,35 +63,7 @@ async function translateObject(kind, id, source, lang, collect) {
   return copy;
 }
 
-export function translateGuide(guide, lang) {
-  return translateObject("guide", guide.slug, guide, lang, (g) => [
-    [g, "forWhom"],
-    [g, "summary"],
-    ...(g.steps || []).flatMap((s) => [
-      [s, "title"],
-      [s, "text"],
-    ]),
-  ]);
-}
-
-export function translateFlow(flow, lang) {
-  return translateObject("flow", flow.slug, flow, lang, (f) => {
-    const refs = [[f, "summary"]];
-    for (const node of Object.values(f.nodes || {})) {
-      if (node.question) refs.push([node, "question"]);
-      for (const option of node.options || []) refs.push([option, "label"]);
-      const r = node.result;
-      if (r) {
-        refs.push([r, "title"], [r, "reason"]);
-        (r.advice || []).forEach((_, i) => refs.push([r.advice, i]));
-        if (r.action) refs.push([r.action, "label"]);
-      }
-    }
-    return refs;
-  });
-}
-
-/** Hausapotheke eines Landes: Titel und Beschreibung (Quelle und Prüfvermerk bleiben im Original). */
+/** Hausapotheke eines Landes: Titel und Beschreibung. */
 export function translateCabinet(items, lang) {
   return translateObject("cabinet", items.map((i) => i.id).join(","), items, lang, (list) =>
     list.flatMap((item) => [
@@ -121,10 +93,4 @@ export function translatePartner(partner, lang) {
       [s, "description"],
     ]),
   ]);
-}
-
-/** Übersetzt ein Feld (z. B. `summary`) einer Liste von Einträgen; Ergebnis: { [id]: text }. */
-export function translateField(kind, items, idKey, field, lang) {
-  const source = Object.fromEntries(items.map((item) => [item[idKey], item[field]]));
-  return translateObject(kind, `list.${field}`, source, lang, (map) => Object.keys(map).map((k) => [map, k]));
 }

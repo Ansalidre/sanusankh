@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { adminApi } from "./api";
-import { BILLING_LABELS, germanDate, money, selectClass, smallInputClass, STATUS_LABELS, STATUS_STYLES } from "./labels";
+import { BILLING_LABELS, commissionText, germanDate, money, selectClass, smallInputClass, STATUS_LABELS, STATUS_STYLES } from "./labels";
 
 /** Eine Vermittlung: Status, Auftragswert, Abrechnung und interne Notiz direkt in der Zeile pflegen. */
 function Row({ referral, onSaved }) {
@@ -27,7 +27,7 @@ function Row({ referral, onSaved }) {
     }
   };
 
-  const model = referral.commissionModel?.type === "fixed" ? `fest ${money(referral.commissionModel.value, referral.currency)}` : `${referral.commissionModel?.value} %`;
+  const model = commissionText(referral.commissionModel, referral.currency);
 
   return (
     <tr className="border-t border-border align-top">
@@ -168,7 +168,7 @@ export default function Referrals({ partners }) {
       {error && <p className="font-semibold text-emergency">{error}</p>}
       {list && (
         <p className="text-sm text-muted-foreground">
-          {list.length} Vermittlung(en). Status und Auftragswert pflegst du hier; die Provision wird nach dem bei der Anfrage gültigen Modell berechnet.
+          {list.length} Vermittlung(en). Status und Auftragswert pflegst du hier; die Provision wird nach dem bei der Anfrage gültigen Modell berechnet – nur bei Bestattern mit Provisionsvereinbarung.
         </p>
       )}
       <div className="overflow-x-auto rounded-2xl border-2 border-border bg-card">

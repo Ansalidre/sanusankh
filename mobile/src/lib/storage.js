@@ -6,12 +6,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NS = "sanusankh.v1";
-const KEYS = ["prefs", "profiles", "history", "cabinet", "partners", "requests"];
-const MAX_HISTORY = 100;
+const KEYS = ["prefs", "profiles", "cabinet", "partners", "requests"];
+// Nicht mehr genutzte Daten älterer Versionen (Verlauf des früheren Symptom-Checks) – werden beim Start gelöscht.
+const LEGACY_KEYS = ["history"];
 
 const cache = {};
 
 export async function initStorage() {
+  AsyncStorage.multiRemove(LEGACY_KEYS.map((k) => `${NS}.${k}`)).catch(() => {});
   try {
     const pairs = await AsyncStorage.multiGet(KEYS.map((k) => `${NS}.${k}`));
     for (const [fullKey, raw] of pairs) {
@@ -135,20 +137,5 @@ export const requestStore = {
       "requests",
       requestStore.list().filter((r) => r.code !== code),
     );
-  },
-};
-
-export const historyStore = {
-  list() {
-    const list = read("history", []);
-    return Array.isArray(list) ? list : [];
-  },
-  add(entry) {
-    const item = { id: newId(), date: new Date().toISOString(), ...entry };
-    write("history", [item, ...historyStore.list()].slice(0, MAX_HISTORY));
-    return item;
-  },
-  clear() {
-    write("history", []);
   },
 };

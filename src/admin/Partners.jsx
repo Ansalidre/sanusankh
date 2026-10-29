@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { COUNTRIES, isPartnerBookable, isPartnerVisible } from "../../netlify/lib/model.mjs";
+import { COUNTRIES, hasCommission, isPartnerBookable, isPartnerVisible } from "../../netlify/lib/model.mjs";
 import { adminApi } from "./api";
-import { CONTRACT_LABELS, germanDate, money, selectClass, smallInputClass } from "./labels";
+import { commissionText, CONTRACT_LABELS, germanDate, money, selectClass, smallInputClass } from "./labels";
 
 const EMPTY = {
   id: "",
@@ -26,7 +26,7 @@ const EMPTY = {
   discount: { type: "percent", value: "", conditions: "", validFrom: "", validTo: "" },
   services: [{ id: "vorsorgegespraech", title: "Kostenloses Vorsorgegespräch", description: "", priceFrom: "" }],
   contact: { email: "", webhookUrl: "", webhookSecret: "" },
-  commission: { type: "percent", value: "" },
+  commission: { agreed: false, type: "percent", value: "", from: "", to: "" },
   contract: { status: "draft", from: "", to: "", contactName: "", contactEmail: "", contactPhone: "" },
 };
 
@@ -226,21 +226,36 @@ function Editor({ initial, isNew, onDone }) {
         )}
       </Section>
 
-      <Section internal title="Provisionsmodell">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field id="p-commission-type" label="Art">
-            <select id="p-commission-type" className={selectClass} value={p.commission.type} onChange={set("commission.type")}>
-              <option value="percent">Prozent vom Auftragswert</option>
-              <option value="fixed">Festbetrag pro Buchung</option>
-            </select>
-          </Field>
-          <Field id="p-commission-value" label={p.commission.type === "fixed" ? "Betrag" : "Prozent"} hint="gilt für neue Anfragen; bestehende behalten ihr Modell">
-            {input("commission.value", { inputMode: "decimal" })}
-          </Field>
-        </div>
+      <Section
+        internal
+        title="Provision"
+        note="Nur mit unterschriebenem Kooperationsvertrag ankreuzen. Erst dann zeigt die App den Provisionshinweis und die Vermittlung bekommt ein Provisionsmodell."
+      >
+        <label className="flex items-center gap-2 text-sm font-semibold">
+          <input type="checkbox" checked={p.commission.agreed} onChange={set("commission.agreed")} /> Provisionsvereinbarung liegt vor
+        </label>
+        {p.commission.agreed && (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Field id="p-commission-type" label="Art">
+              <select id="p-commission-type" className={selectClass} value={p.commission.type} onChange={set("commission.type")}>
+                <option value="percent">Prozent vom Auftragswert</option>
+                <option value="fixed">Festbetrag pro Buchung</option>
+              </select>
+            </Field>
+            <Field id="p-commission-value" label={p.commission.type === "fixed" ? "Betrag" : "Prozent"} hint="gilt für neue Anfragen; bestehende behalten ihr Modell">
+              {input("commission.value", { inputMode: "decimal" })}
+            </Field>
+            <Field id="p-commission-from" label="Vereinbarung ab">
+              {input("commission.from", { type: "date" })}
+            </Field>
+            <Field id="p-commission-to" label="Vereinbarung bis" hint="leer = unbefristet">
+              {input("commission.to", { type: "date" })}
+            </Field>
+          </div>
+        )}
       </Section>
 
-      <Section internal title="Kooperationsvertrag" note="Nur bei Status „aktiv“ und innerhalb der Laufzeit erscheint der Bestatter in der App.">
+      <Section internal title="Freischaltung in der App" note="Nur bei Status „freigeschaltet“ (und im Zeitraum, falls angegeben) erscheint der Bestatter in der App. Ein Vertrag ist dafür nicht nötig – der Bestatter muss nur zugestimmt haben, gelistet zu werden und Anfragen zu bekommen.">
         <div className="grid gap-3 sm:grid-cols-3">
           <Field id="p-contract-status" label="Status">
             <select id="p-contract-status" className={selectClass} value={p.contract.status} onChange={set("contract.status")}>
@@ -251,10 +266,10 @@ function Editor({ initial, isNew, onDone }) {
               ))}
             </select>
           </Field>
-          <Field id="p-contract-from" label="Vertragsbeginn">
+          <Field id="p-contract-from" label="sichtbar ab" hint="optional">
             {input("contract.from", { type: "date" })}
           </Field>
-          <Field id="p-contract-to" label="Vertragsende">
+          <Field id="p-contract-to" label="sichtbar bis" hint="optional">
             {input("contract.to", { type: "date" })}
           </Field>
           <Field id="p-contract-contactName" label="Ansprechpartner">
@@ -288,7 +303,7 @@ function Editor({ initial, isNew, onDone }) {
   );
 }
 
-/** Liste der Kooperations-Bestatter mit Vertragsstatus; Bearbeiten öffnet das Formular. */
+/** Liste der Kooperations-Bestatter mit Freischaltung und Provision; Bearbeiten öffnet das Formular. */
 export default function Partners({ partners, reload }) {
   const [editing, setEditing] = useState(null);
   const day = today();
@@ -301,12 +316,12 @@ export default function Partners({ partners, reload }) {
     discount: { ...EMPTY.discount, ...partner.discount, value: partner.discount?.value ?? "" },
     services: partner.services.map((s) => ({ ...s, priceFrom: s.priceFrom ?? "" })),
     contact: { ...EMPTY.contact, ...partner.contact },
-    commission: { ...EMPTY.commission, ...partner.commission },
+    commission: { ...EMPTY.commission, ...partner.commission, agreed: partner.commission?.agreed === true, value: partner.commission?.value ?? "" },
     contract: { ...EMPTY.contract, ...partner.contract },
   });
 
   const remove = async (partner) => {
-    if (!window.confirm(`„${partner.name}“ löschen? Bestehende Vermittlungen bleiben erhalten. Alternativ den Vertrag auf „beendet“ setzen.`)) return;
+    if (!window.confirm(`„${partner.name}“ löschen? Bestehende Vermittlungen bleiben erhalten. Alternativ die Freischaltung auf „beendet“ setzen.`)) return;
     await adminApi(`/partners/${encodeURIComponent(partner.id)}`, { method: "DELETE" }).catch(() => {});
     reload();
   };
@@ -347,13 +362,13 @@ export default function Partners({ partners, reload }) {
                 {p.country} · {p.address || "ohne Adresse"} · {p.services.length} Leistung(en)
               </p>
               <p className="text-sm">
-                Vertrag: <strong>{CONTRACT_LABELS[p.contract.status]}</strong>
-                {p.contract.from && ` · ${germanDate(p.contract.from)} – ${germanDate(p.contract.to)}`}
+                Freischaltung: <strong>{CONTRACT_LABELS[p.contract.status]}</strong>
+                {(p.contract.from || p.contract.to) && ` · ${germanDate(p.contract.from) || "…"} – ${germanDate(p.contract.to) || "…"}`}
                 {p.contract.contactName && ` · ${p.contract.contactName}`}
               </p>
               <p className="text-sm">
                 Rabatt: {p.discount.type === "none" ? "keiner" : p.discount.type === "percent" ? `${p.discount.value} %` : money(p.discount.value, p.currency)} · Provision:{" "}
-                {p.commission.type === "fixed" ? `${money(p.commission.value, p.currency)} pro Buchung` : `${p.commission.value} % vom Auftragswert`}
+                {hasCommission(p, day) ? commissionText(p.commission, p.currency) : p.commission?.agreed ? "Vereinbarung nicht im Zeitraum" : "keine Vereinbarung"}
               </p>
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button size="sm" variant="outline" onClick={() => setEditing({ partner: toForm(p), isNew: false })}>

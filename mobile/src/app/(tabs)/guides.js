@@ -5,42 +5,30 @@ import { BookOpen, ChevronRight, Search } from "lucide-react-native";
 import IconBubble from "@/components/IconBubble";
 import Screen from "@/components/Screen";
 import SectionHeader from "@/components/SectionHeader";
-import TranslationStatus from "@/components/TranslationStatus";
 import { Card, cardStyle } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { Muted, T } from "@/components/ui/Text";
 import { TextField } from "@/components/ui/TextField";
-import { FIRST_AID_GUIDES, GUIDE_CATEGORIES } from "@/data/firstAidGuides";
-import { translateField } from "@/lib/ai";
+import { FIRST_AID_GUIDES, GUIDE_CATEGORIES, ORGANIZATIONS, getCategory } from "@/data/firstAidGuides";
 import { pick, useI18n } from "@/lib/i18n";
 import { colors } from "@/lib/theme";
-import { useAiTranslation } from "@/lib/useAiTranslation";
 
-const translateSummaries = (guides, lang) => translateField("guides", guides, "slug", "summary", lang);
-
+/** Erste-Hilfe-Themen: jedes Thema verweist auf die Seiten anerkannter Hilfsorganisationen. */
 export default function Guides() {
   const { t, lang, rtl } = useI18n();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
-  const summaries = useAiTranslation(FIRST_AID_GUIDES, lang, translateSummaries, "guides-summaries");
 
-  const summaryOf = (guide) => (summaries.status === "translated" ? summaries.data[guide.slug] || guide.summary : guide.summary);
+  const sourcesOf = (guide) => guide.links.map((l) => ORGANIZATIONS[l.org]?.short).join(" · ");
 
   const results = useMemo(() => {
     const q = query.trim().toLocaleLowerCase(lang);
     return FIRST_AID_GUIDES.filter((g) => category === "all" || g.category === category).filter((g) => {
       if (!q) return true;
-      const haystack = [
-        ...Object.values(g.title),
-        g.summary,
-        summaries.status === "translated" ? summaries.data[g.slug] : "",
-        ...g.steps.flatMap((s) => [s.title, s.text]),
-      ]
-        .join(" ")
-        .toLocaleLowerCase(lang);
+      const haystack = [...Object.values(g.title), ...Object.values(getCategory(g.category)?.label ?? {})].join(" ").toLocaleLowerCase(lang);
       return haystack.includes(q);
     });
-  }, [query, category, lang, summaries]);
+  }, [query, category, lang]);
 
   return (
     <Screen tab keyboard>
@@ -80,8 +68,6 @@ export default function Guides() {
         })}
       </ScrollView>
 
-      {lang !== "de" && <TranslationStatus status={summaries.status} showButtons={false} />}
-
       {results.length === 0 ? (
         <Card>
           <Muted>{t("guides.none")}</Muted>
@@ -100,7 +86,7 @@ export default function Guides() {
                 <T weight="heading" size="lg">
                   {pick(guide.title, lang)}
                 </T>
-                <Muted size="sm">{summaryOf(guide)}</Muted>
+                <Muted size="sm">{sourcesOf(guide)}</Muted>
               </View>
               <Icon as={ChevronRight} color={colors.mutedForeground} flip />
             </Pressable>

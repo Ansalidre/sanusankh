@@ -1,6 +1,7 @@
 /*
  * GET /api/partners?country=DE → { partners: [...] }
- * Öffentliche Daten der Kooperations-Bestatter für die App (ohne Provision, Vertrag und Kontaktweg).
+ * Öffentliche Daten der Kooperations-Bestatter für die App (ohne Provisionshöhe, Vertrag und Kontaktweg;
+ * `commission` gibt nur an, ob eine Provisionsvereinbarung gilt und der Hinweis erscheinen muss).
  */
 import { json, preflight, today } from "../lib/http.mjs";
 import { COUNTRIES, isPartnerVisible, publicPartner } from "../lib/model.mjs";

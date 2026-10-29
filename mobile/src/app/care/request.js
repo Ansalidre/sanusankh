@@ -158,9 +158,11 @@ export default function Request() {
         </Card>
       )}
 
-      <Notice tone={colors.calm} icon={HandCoins} weight="semibold">
-        {t("request.commission")}
-      </Notice>
+      {source?.commission === true && (
+        <Notice tone={colors.calm} icon={HandCoins} weight="semibold">
+          {t("request.commission")}
+        </Notice>
+      )}
 
       <CheckRow checked={consent} onChange={setConsent} label={t("request.consent", { partner: partner.name })} hint={t("request.consentHint")} />
 

@@ -128,7 +128,11 @@ function reportCsv(groups, month) {
   const rows = [["Monat", "Bestatter", "Code", "Leistung", "Angefragt am", "Beauftragt am", "Status", "Auftragswert", "Provisionsmodell", "Provision", "Währung", "Abrechnung"]];
   for (const g of groups) {
     for (const r of g.items) {
-      const model = r.commissionModel?.type === "fixed" ? `fest ${decimal(r.commissionModel.value)}` : `${decimal(r.commissionModel?.value)} %`;
+      const model = !r.commissionModel
+        ? "keine Vereinbarung"
+        : r.commissionModel.type === "fixed"
+          ? `fest ${decimal(r.commissionModel.value)}`
+          : `${decimal(r.commissionModel.value)} %`;
       rows.push([month, g.partnerName, r.code, r.serviceTitle, germanDate(r.createdAt), germanDate(commissionedAt(r)), STATUS_DE[r.status], decimal(r.orderValue), model, decimal(r.commission), r.currency, BILLING_DE[r.billingStatus]]);
     }
     rows.push([month, `Summe ${g.partnerName}`, "", `${g.commissioned} beauftragt / ${g.requested} angefragt / ${g.cancelled} storniert`, "", "", "", decimal(g.orderTotal), "", decimal(g.commissionTotal), g.currency, ""]);

@@ -1,76 +1,98 @@
 # Offene Punkte vor der Veröffentlichung
 
-Diese Liste nennt alle Inhalte, die noch **fachlich (medizinisch oder juristisch) geprüft** oder **vom Kunden geliefert** werden müssen. Technisch ist alles umgesetzt. Die Inhalte stehen in den Dateien, die in der Spalte „Wo“ genannt sind.
+Die App ist so umgebaut, dass weder eine medizinische Fachprüfung noch eine anwaltliche Prüfung der App nötig sein soll:
 
-## 1. Medizinische Prüfung (Fachpersonal)
+- Kein Symptom-Check, keine Auswertung von Eingaben, keine Dringlichkeitsstufen.
+- Keine eigenen Erste-Hilfe-Anleitungen, stattdessen Links zu DRK, Johanniter und Malteser.
+- Keine Arzneimittel in der Hausapotheke.
+- KI ohne Gesundheitsberatung.
+- Keine vergüteten Versicherungslinks.
+- Vorerst keine Provision von Bestattern: Kein Bestatter hat eine Provisionsvereinbarung, die App zeigt keinen Provisionshinweis.
 
-| Was | Wo | Stand |
-| --- | --- | --- |
-| Hausapotheke Deutschland: 3 Arzneimittel-Gruppen (Schmerz-/Fieber, Durchfall inkl. Elektrolytlösung, Wunddesinfektion) | `src/content/medicineCabinet.json` | ungeprüft – erscheint im Store-Build erst nach Freigabe (`status`, `reviewedBy`, `reviewedAt`) |
-| Hausapotheke für alle Länder: 7 Hilfsmittel (Verbandsmaterial, Thermometer, Handschuhe, Kühlpack, Pinzette/Zeckenkarte, Schere, Rettungsdecke) | `src/content/medicineCabinet.json` | ungeprüft – wird angezeigt, Kennzeichnung „Ungeprüft“ |
-| Quellenangaben zur Hausapotheke | `medicineCabinet.json`, Feld `source` | leer – bitte Quelle eintragen (wir haben keine erfunden) |
-| Hausapotheke für AT, CH, IT, FR, TR, PL | `medicineCabinet.json` | fehlt – App zeigt nur Hilfsmittel und „Länderspezifische Empfehlungen folgen“ |
-| Erste-Hilfe-Anleitungen, Symptom-Abläufe, Warnzeichen (wie bisher) | `src/data/*.js` | ungeprüft |
-| Feste italienische und französische Übersetzungen der Warnzeichen und Sofortmaßnahmen | `src/data/redFlags.js` (`it`, `fr`) | neu, von Muttersprachlern bzw. Fachübersetzern prüfen lassen |
-| Medizinprodukt-Einstufung (EU-MDR) des Symptom-Checks | – | offen (siehe README) |
+Rechtstexte kommen aus einem Generator. **Ein Kooperationsvertrag mit Bestattern ist erst nötig, wenn eine Provision vereinbart wird (Abschnitt 3).** Bis dahin tritt Dennis als Privatperson ohne Händlerstatus auf.
 
-## 2. Notrufnummern je Land
+## 1. Vom Kunden einzurichten bzw. zu liefern
 
-Alle Länder sind in `src/content/countries.json` mit `"reviewed": false` markiert.
+| Was | Hinweis |
+| --- | --- |
+| Domain | Für Webseite, Server-Adresse der App und Absender der E-Mails. In Netlify verbinden. |
+| E-Mail-Postfach unter der Domain | Kontaktadresse für Impressum, Antworten von Nutzern und Bestattern |
+| Netlify-Konto | Repository verbinden, Umgebungsvariablen setzen (siehe `../README.md`) |
+| Brevo-Konto | Absenderdomain verifizieren (SPF/DKIM), API-Schlüssel nach `BREVO_API_KEY`, Absender nach `MAIL_FROM` |
+| Anthropic-Konto | API-Schlüssel nach `ANTHROPIC_API_KEY`, **monatliches Ausgabenlimit** setzen |
+| Apple Developer Program | Vorerst als Privatperson (Name erscheint im App Store). D-U-N-S-Nummer nur für ein Firmenkonto. |
+| Google Play Console | Vorerst als Privatperson: vor der Produktion geschlossener Test mit mindestens 12 Testern über 14 Tage. Firmenkonto bräuchte eine D-U-N-S-Nummer. |
+| Händlerstatus (EU) in beiden Stores | Vorerst „kein Händler“ (siehe [STORE-TEXTE.md](STORE-TEXTE.md)) |
+| Firebase / Push | **Nicht nötig.** Erinnerungen der Hausapotheke sind lokale Mitteilungen, kein Push-Schlüssel, keine `google-services.json`. |
+| Expo-Konto | Kostenlos, für die Cloud-Builds |
+| Angaben für Impressum und Datenschutzerklärung | Siehe [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md), Abschnitt 1 |
+| Standardverträge zur Auftragsverarbeitung | Netlify, Brevo, Anthropic: gelten mit dem Konto. Aktuelle Fassung herunterladen und ablegen (Links in [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md), Abschnitt 4). |
+| Bestatter, die über die App angefragt werden können | Zustimmung des Bestatters per E-Mail genügt (gelistet werden, Anfragen bekommen, Daten nur für die Anfrage nutzen). Pflege in `/admin/` → „Bestatter“: Name, Adresse, Koordinaten, Telefon, Website, Rabatt mit Bedingungen, Leistungen mit Richtpreisen, E-Mail für Anfragen, Freischaltung, Ansprechpartner. „Provisionsvereinbarung liegt vor“ **nicht** ankreuzen. |
+| Logo als Vektordatei (SVG) oder in höherer Auflösung | `assets/brand/` – Icons wurden aus dem 1254-px-JPG erzeugt |
+| Store-Screenshots | iPhone und Android |
+| Telemedizin-Partner und Online-Apotheke | Derzeit Platzhalter („Demnächst verfügbar“) in `src/app/telemedicine.js` und `src/app/pharmacy.js` |
+
+## 2. Rechtstexte und Store-Angaben (ohne Anwalt)
+
+| Was | Wo |
+| --- | --- |
+| Impressum und Datenschutzerklärung mit einem Generator erstellen und auf der Webseite einfügen | `impressum/index.html`, `datenschutz/index.html` im Hauptprojekt; Angaben: [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md) |
+| Store-Texte übernehmen (Entwurf) | [STORE-TEXTE.md](STORE-TEXTE.md) |
+| Datenschutzangaben in App Store Connect („App-Datenschutz“) und Play Console („Datensicherheit“) | Vorschlag in [STORE-TEXTE.md](STORE-TEXTE.md) |
+| Store-Links auf der Webseite eintragen | `index.html` im Hauptprojekt (App-Store-ID nach Anlage der App) |
+
+## 3. Erst wenn eine Provision kommt: Kooperationsvertrag, Gewerbe, Händlerstatus
+
+Vorerst entfällt dieser Abschnitt. Sobald mit einem Bestatter eine Provision vereinbart werden soll:
+
+1. **Gewerbe anmelden**, Steuerfragen (Umsatzsteuer, Kleinunternehmerregelung) mit der Steuerberatung klären.
+2. **Händlerstatus** in App Store Connect und Google Play auf „Händler“ ändern – Anschrift und Telefon werden dann im Store öffentlich. Impressum und Datenschutzerklärung im Generator neu erzeugen.
+3. **Kooperationsvertrag** einmal von jemandem mit Rechtskenntnis ansehen lassen (einziger Punkt mit Rechtsbezug, den der Generator nicht abdeckt).
+4. Erst dann in `/admin/` beim Bestatter „Provisionsvereinbarung liegt vor“ ankreuzen (Art, Höhe, Beginn). Ab dann zeigt die App den Provisionshinweis, und die Vermittlungen bekommen eine Provision. In [STORE-TEXTE.md](STORE-TEXTE.md) den Provisionssatz in die Beschreibung aufnehmen.
+
+Ein Mustervertrag für alle Bestatter genügt. Er sollte mindestens regeln:
+
+- **Keine Mehrkosten für Nutzer:** Der Rabatt wird nicht durch Preisaufschläge finanziert. Die App sagt den Nutzern: „Du zahlst dadurch nicht mehr.“
+- **Provision:** Höhe (Prozent oder fester Betrag), wann sie fällig wird (Beauftragung) und wie abgerechnet wird.
+- **Monatliche Meldepflicht** für eingelöste Codes und Auftragswerte. Pflege in `/admin/` → „Vermittlungen“.
+- **Daten aus Anfragen** nur zur Bearbeitung der Anfrage nutzen; Löschung, wenn die Anfrage zurückgezogen wird. Der Bestatter ist für diese Daten eigener Verantwortlicher.
+- **Rabatt:** Höhe, Bedingungen und Gültigkeitszeitraum wie in der Admin-Ansicht hinterlegt.
+- Laufzeit, Kündigung, Ansprechpartner.
+
+**Provisionshinweis in der App** (nur bei Bestattern mit Vereinbarung; direkt über dem Absenden-Knopf, bewusst einfach): „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“ Diese Bestatter heißen in der App „Partner von SanusAnkh“; in Liste und Detailseite steht zusätzlich: „Mit ‚Partner von SanusAnkh‘ gekennzeichnete Bestatter sind Kooperationspartner: Beauftragst du einen von ihnen, bekommt SanusAnkh vom Bestatter eine Provision. Du zahlst dadurch nicht mehr.“ Ohne Vereinbarung steht dort nur: „Diese Bestatter kannst du direkt über SanusAnkh anfragen. Das ist keine Empfehlung.“
+
+## 4. Entscheidungen des Kunden
+
+| Was | Stand |
+| --- | --- |
+| Speicherdauer der Vermittlungsdaten (Code, Bestatter, Leistung, Datum, Status, Auftragswert) | Derzeit unbegrenzt. Frist festlegen und in der Datenschutzerklärung nennen. Aufbewahrungspflichten für Abrechnungsunterlagen werden erst mit einer Provision relevant. |
+| Missbrauch mit fremder E-Mail-Adresse | Schutz derzeit: höchstens 5 Anfragen pro Stunde je Herkunft. Optional Bestätigung per E-Mail-Link (Double-Opt-in) nachrüsten. |
+| E-Mail-Texte an Bestatter und Nutzer | `../netlify/lib/emails.mjs`; Nutzer-E-Mail auf Deutsch mit kurzem englischem Absatz |
+| Ansprache „du“ in der App | Durchgehend „du“, auch im Provisionshinweis |
+| Mehrere Admin-Konten, eigener Zugang für Bestatter (Codes einlösen, Auftragswerte melden) | Vorbereitet, nicht umgesetzt (TODO in `../netlify/lib/auth.mjs`, `../src/admin/AdminApp.jsx`) |
+
+## 5. Notrufnummern je Land gegenprüfen
+
+Das sind Sachangaben, keine medizinischen Inhalte. Prüfen gegen die offiziellen Quellen der Länder. Alle Länder stehen in `src/content/countries.json` mit `"reviewed": false`.
 
 | Land | Hinterlegt | Prüfen bzw. ergänzen |
 | --- | --- | --- |
-| Deutschland | 112, 116117, 110, Giftnotruf je Bundesland, Telefonseelsorge (116 123, 0800 111 0 111), Taxi-Kurzwahl 22456, Apotheken-Notdienst | Gegenprüfung gegen offizielle Quellen |
-| Österreich | 112, 144, 122, 133, 1450, Vergiftungsinformationszentrale, 142, Apothekenruf 1455 | prüfen |
-| Schweiz | 112, 144, 118, 117, Tox Info Suisse 145, Die Dargebotene Hand 143 | prüfen; ärztlicher Notfalldienst ist kantonal (fehlt) |
+| Deutschland | 112, 116117, 110, Giftnotruf je Bundesland, Telefonseelsorge (116 123, 0800 111 0 111), Taxi-Kurzwahl 22456, Apotheken-Notdienst | Gegenprüfung |
+| Österreich | 112, 144, 122, 133, 1450, Vergiftungsinformationszentrale, 142, Apothekenruf 1455 | Gegenprüfung |
+| Schweiz | 112, 144, 118, 117, Tox Info Suisse 145, Die Dargebotene Hand 143 | ärztlicher Notfalldienst ist kantonal (fehlt) |
 | Italien | 112, 118, 115, 113 | Giftnotruf (regional), Krisentelefon, Guardia medica fehlen |
 | Frankreich | 112, 15, 18, 17, 3114 | Giftnotruf (regional), Bereitschaftsdienst fehlen |
 | Türkei | 112, Giftnotruf 114 | Krisentelefon fehlt |
 | Polen | 112, 999, 998, 997, 116 123 | Giftnotruf (regional), Bereitschaftsdienst fehlen |
 
-Für alle Länder außer Deutschland gilt außerdem: Symptom-Check, Fahrdienst-Hinweise und Telemedizin sind für das deutsche Gesundheitssystem geschrieben. Die App weist darauf hin.
+## 6. Was durch den Umbau weggefallen ist
 
-## 3. Juristische Prüfung
-
-| Was | Wo |
+| Früher offen | Warum es entfällt |
 | --- | --- |
-| Vorsorge-Texte Deutschland (Patientenverfügung, Vorsorgevollmacht, Betreuungsverfügung) und BMJ-Links | `src/content/careInfo.json` (`directive-de`) |
-| Vorsorge-Texte für AT, CH und weitere Länder (z. B. Erwachsenenvertretung in AT, Vorsorgeauftrag in CH) | `careInfo.json` – fehlen; die App zeigt „noch keine Informationen“ |
-| Neutrale Erklärung Sterbegeldversicherung | `careInfo.json` (`insurance-general`) |
-| Partnerlinks gegen Vergütung bei Versicherungen: ggf. Versicherungsvermittlung (§ 34d GewO), Kennzeichnung als Werbung | `providers.json`, Datenschutz Abschnitt 10 |
-| Datenschutzerklärung: neue Abschnitte 7–10 (Gesundheitsdaten nach Art. 9 DSGVO, Kamera/Fotos, Mitteilungen, Nominatim, Partnerlinks), alle als TODO markiert | `src/app/legal/[page].js` |
-| Impressum, Haftungsausschluss (wie bisher) | `src/app/legal/[page].js` |
-
-## 4. Vom Kunden zu liefern
-
-| Was | Wo |
-| --- | --- |
-| Kooperations-Bestatter: Name, Adresse, Koordinaten, Telefon, Website, Rabatt mit Bedingungen, buchbare Leistungen mit Richtpreisen, E-Mail für Anfragen, Provisionsmodell, Vertrag von/bis, Ansprechpartner | Admin-Ansicht `/admin` → „Bestatter“ (nicht mehr in `providers.json`) |
-| Partnerverträge Sterbegeldversicherung: Name, Website, Logo, Vertrag von/bis, Tracking-Parameter | `providers.json` (`type: "insurance"`) |
-| Logos der Partner (https-Adresse) | Feld `logo` – die App zeigt Logos derzeit noch nicht an; bei Lieferung ergänzen wir die Anzeige |
-| Ersetzen bzw. Löschen der Demo-Anbieter | `providers.json` (Sterbegeld, `"demo": true`); Demo-Bestatter wird nur lokal bzw. mit `SEED_DEMO_PARTNERS=true` angelegt |
-| Telemedizin-Partner und Online-Apotheke (wie bisher Platzhalter) | `src/app/telemedicine.js`, `src/app/pharmacy.js` |
-| Logo als Vektordatei (SVG) oder in höherer Auflösung | `assets/brand/` – Icons wurden aus dem 1254-px-JPG erzeugt |
-| Freigabe der Ansprache „du“: Der Apotheken-Hinweis lautet in der App „Frag in deiner Apotheke …“ statt „Fragen Sie …“, passend zur übrigen App | `src/locales/*.js`, Schlüssel `cabinet.medHint` |
-
-## 5. Kooperations- und Buchungsmodell Bestatter
-
-Technisch umgesetzt und im Testbetrieb durchklickbar. Vor dem Live-Betrieb:
-
-| Was | Wer | Wo / Hinweis |
-| --- | --- | --- |
-| Auftragsverarbeitungsvertrag (AVV) mit **Brevo** | Kunde | Brevo-Konto; Absenderdomain bei Brevo verifizieren (SPF/DKIM) |
-| Auftragsverarbeitungsvertrag (AVV) mit **Netlify** – US-Anbieter, Drittlandübermittlung in der Datenschutzerklärung nennen (z. B. EU-US Data Privacy Framework/Standardvertragsklauseln) | Kunde, juristisch | Datenschutz Abschnitt 11 (als TODO markiert) |
-| Datenschutzangaben in **App Store** („App-Datenschutz“) und **Google Play** („Datensicherheit“) anpassen: neu erhoben werden Name, E-Mail, optional Telefon und Freitext (ggf. Bestattungswünsche); Zweck: Weiterleitung an den gewählten Bestatter; Weitergabe an Dritte: ja (Bestatter) | Kunde | App Store Connect, Play Console |
-| Kooperationsvertrag mit jedem Bestatter: Klausel **„keine Mehrkosten für Nutzer“** (Rabatt nicht durch Preisaufschlag finanziert) | juristisch, Kunde | Vertrag |
-| Kooperationsvertrag: **monatliche Meldepflicht** für eingelöste Codes und Auftragswerte | juristisch, Kunde | Vertrag; Pflege in `/admin` → „Vermittlungen“ |
-| Kooperationsvertrag: Verwendung der Anfragedaten nur zur Bearbeitung der Anfrage, Löschung nach Zurückziehen, Bestatter als eigener Verantwortlicher | juristisch | Vertrag |
-| **Rechtliche Prüfung des Provisionshinweises** (Wortlaut, Platzierung, UWG/Kennzeichnung). In der App steht er in der Du-Form: „SanusAnkh erhält bei einer Beauftragung eine Vermittlungsprovision vom Bestatter. Für dich entstehen dadurch keine Mehrkosten.“ | juristisch | `src/locales/*.js`, Schlüssel `request.commission` |
-| Einwilligungstext („Ich willige ein, dass meine Angaben an [Bestatter] übermittelt werden.“) und Hinweis zur Widerrufbarkeit | juristisch | Schlüssel `request.consent`, `request.consentHint` |
-| Speicherdauer der Vermittlungsdaten (Code, Bestatter, Leistung, Datum, Status, Auftragswert) festlegen – derzeit unbegrenzt | juristisch, Kunde | Löschregel ggf. nachrüsten |
-| Bestattungswünsche können religiöse Überzeugungen enthalten (Art. 9 DSGVO) – sie werden nur per eigenem Klick angehängt; Einordnung prüfen | juristisch | Datenschutz Abschnitt 11 |
-| Texte der E-Mails an Bestatter und Nutzer prüfen; Nutzer-E-Mail derzeit Deutsch mit kurzem englischem Absatz | Kunde | `netlify/lib/emails.mjs` |
-| Missbrauch: Wer eine fremde E-Mail-Adresse einträgt, löst eine Bestätigungsmail an diese Adresse aus. Schutz derzeit: höchstens 5 Anfragen pro Stunde je Herkunft. Ggf. Bestätigung per E-Mail-Link (Double-Opt-in) ergänzen | Kunde entscheidet | `netlify/functions/requests.mjs` |
-| Umgebungsvariablen in Netlify setzen: `ADMIN_PASSWORD` (mind. 12 Zeichen), `HASH_SECRET`, `BREVO_API_KEY`, `MAIL_FROM`, `MAIL_FROM_NAME` | Kunde | Netlify → Environment variables; Vorlage `.env.example` |
-| App-Build: `EXPO_PUBLIC_API_URL` ist jetzt die Basisadresse (`https://…/api`) statt der Assistent-Adresse | Entwicklung | `mobile/.env.example`, EAS-Umgebungsvariablen |
-| Vorbereitet, nicht umgesetzt (TODO im Code): mehrere Admin-Konten; eigener Partner-Zugang, über den Bestatter Codes selbst einlösen und Auftragswerte melden | – | `netlify/lib/auth.mjs`, `src/admin/AdminApp.jsx` |
+| Medizinische Prüfung der Erste-Hilfe-Anleitungen, Symptom-Abläufe und Warnzeichen-Handlungsschritte | Eigene Anleitungen und Abläufe gibt es nicht mehr. Die App verlinkt DRK, Johanniter und Malteser. Die Warnzeichen sind eine allgemeine Liste ohne Handlungsschritte. |
+| Medizinische Prüfung der Arzneimittel in der Hausapotheke | Keine Arzneimittel mehr, nur Verbandsmaterial und Hilfsmittel |
+| Einstufung als Medizinprodukt (EU-MDR) | Keine Abfrage, keine Auswertung, keine Dringlichkeitsstufen, KI ohne Gesundheitsberatung, Store-Texte ohne medizinische Zweckbestimmung |
+| Versicherungsvermittlung (§ 34d GewO) und Werbekennzeichnung bei Sterbegeld-Partnern | Keine Anbieter, keine Vergütung, kein Tracking mehr – nur eine neutrale Erklärung mit Link zur Verbraucherzentrale |
+| Anwaltliche Prüfung von Datenschutzerklärung, Impressum und Haftungsausschluss | Generator; feste „Nutzungshinweise“ in der App ohne Platzhalter |
+| Kooperationsvertrag, Gewerbeanmeldung, Händlerstatus | Vorerst keine Provision; erst nötig, wenn eine Provision vereinbart wird (Abschnitt 3) |
+| Firebase-Projekt, Apple-Push-Schlüssel | Nur lokale Erinnerungen; iOS ohne Push-Berechtigung (`enableRemoteNotifications: false`) |

@@ -11,6 +11,12 @@ const TIMEOUT_MS = 20000;
 
 export const apiAvailable = Boolean(BASE);
 
+/**
+ * Adresse der schlichten Webseite mit Impressum und Datenschutzerklärung (gleiche Domain wie der Server).
+ * EXPO_PUBLIC_SITE_URL überschreibt die aus EXPO_PUBLIC_API_URL abgeleitete Adresse.
+ */
+export const SITE_URL = (process.env.EXPO_PUBLIC_SITE_URL || BASE.replace(/\/api$/, "")).replace(/\/+$/, "");
+
 export class ApiError extends Error {
   constructor(code, status, data) {
     super(code);

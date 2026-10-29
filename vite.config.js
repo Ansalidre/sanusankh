@@ -85,6 +85,14 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
+        // Veröffentlicht werden nur die schlichte Seite (Start, Impressum, Datenschutz) und die Admin-Ansicht.
+        input: {
+          index: path.resolve(here, "index.html"),
+          impressum: path.resolve(here, "impressum/index.html"),
+          datenschutz: path.resolve(here, "datenschutz/index.html"),
+          notFound: path.resolve(here, "404.html"),
+          admin: path.resolve(here, "admin/index.html"),
+        },
         output: {
           manualChunks(id) {
             if (!id.includes("node_modules")) return undefined;

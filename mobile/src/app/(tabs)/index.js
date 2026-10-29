@@ -80,7 +80,7 @@ export default function Home() {
           size="lg"
           variant="secondary"
           label={t("home.start")}
-          onPress={() => router.navigate({ pathname: "/triage", params: { run: String(Date.now()) } })}
+          onPress={() => router.navigate("/emergency")}
           style={styles.heroButton}
         />
       </View>

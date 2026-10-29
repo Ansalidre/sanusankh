@@ -56,7 +56,12 @@
           "text": "Vergleiche die Höhe der Beiträge mit der Versicherungssumme, prüfe, ob es zu Beginn eine Wartezeit gibt, und lies die Bedingungen zur Kündigung. Bei Fragen hilft eine unabhängige Verbraucherberatung."
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "Verbraucherzentrale: Sterbegeldversicherungen",
+          "url": "https://www.verbraucherzentrale.de/wissen/geld-versicherungen/weitere-versicherungen/sterbegeldversicherungen-rechnen-sich-oft-nicht-24283"
+        }
+      ],
       "source": "",
       "status": "unreviewed",
       "reviewedBy": "",

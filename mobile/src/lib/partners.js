@@ -1,6 +1,7 @@
 /*
  * Kooperations-Bestatter vom Server (GET /api/partners) mit Zwischenspeicher für den Offline-Fall
- * und Anfragen (POST /api/requests). Der Server liefert nur öffentliche Daten – keine Provision.
+ * und Anfragen (POST /api/requests). Der Server liefert nur öffentliche Daten – keine Provisionshöhe;
+ * `commission: true` heißt nur: Provisionsvereinbarung, der Provisionshinweis muss erscheinen.
  */
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -13,7 +14,7 @@ import { partnerCache, requestStore } from "@/lib/storage";
 export async function loadPartners(country) {
   try {
     const data = await api(`/partners?country=${encodeURIComponent(country)}`);
-    // Demo-Einträge nur in Entwicklungs-Builds (wie bei providers.json)
+    // Demo-Einträge nur in Entwicklungs-Builds
     const list = (Array.isArray(data.partners) ? data.partners : []).filter((p) => !p.demo || __DEV__);
     const entry = partnerCache.set(country, list);
     return { partners: list, fetchedAt: entry.fetchedAt, live: true };

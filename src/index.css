@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap");
-
+/* Stile der Admin-Ansicht. Systemschriften – es werden keine Schriften von Drittanbietern geladen. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,20 +23,12 @@
     --ring: 193 76% 20%;
     --radius: 1rem;
 
-    --font-heading: "Figtree", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --font-display: "Figtree", "Inter", system-ui, sans-serif;
-  }
-
-  :root[dir="rtl"] {
-    --font-heading: "IBM Plex Sans Arabic", "Figtree", system-ui, sans-serif;
-    --font-body: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
-    --font-display: "IBM Plex Sans Arabic", "Figtree", system-ui, sans-serif;
+    --font-heading: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
 
   html {
-    font-size: 18px;
-    -webkit-tap-highlight-color: transparent;
+    font-size: 16px;
   }
 
   * {
@@ -47,7 +38,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
   h1,
@@ -62,70 +53,5 @@
     outline: 3px solid hsl(var(--ring));
     outline-offset: 2px;
     border-radius: 0.5rem;
-  }
-
-  /* Telefonnummern bleiben in RTL lateinisch und links-nach-rechts */
-  .ltr-nums {
-    direction: ltr;
-    unicode-bidi: isolate;
-    font-variant-numeric: tabular-nums;
-  }
-}
-
-/* Im components-Layer, damit Utilities wie bg-ampel-rot-soft die Kartenfarbe überschreiben können. */
-@layer components {
-  .card-soft {
-    @apply rounded-2xl border border-border/70 bg-card;
-    box-shadow:
-      0 1px 2px rgba(16, 42, 56, 0.04),
-      0 6px 20px -8px rgba(16, 42, 56, 0.1);
-  }
-}
-
-@layer utilities {
-  .tap {
-    @apply inline-flex min-h-[3.25rem] items-center justify-center;
-  }
-
-  .animate-rise {
-    animation: rise 0.35s ease-out both;
-  }
-
-  .pulse-emergency {
-    animation: pulse-ring 2.4s ease-out infinite;
-  }
-
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 rgba(215, 38, 61, 0.45);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(215, 38, 61, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(215, 38, 61, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-rise,
-  .pulse-emergency {
-    animation: none;
   }
 }

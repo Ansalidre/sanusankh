@@ -3,11 +3,14 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# Die Funktionen registrieren ihre Pfade unter /api/... selbst (export const config).
-# SPA-Fallback für react-router:
+# Veröffentlicht werden nur: die Server-Funktionen (Pfade unter /api/... registrieren sie selbst per
+# export const config), die schlichte Seite (/, /impressum/, /datenschutz/) und die Admin-Ansicht /admin.
+# Die App selbst gibt es nur in den Stores, nicht als Web-Version.
+
+# Admin-Ansicht ist eine eigene Single-Page-App.
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/admin/*"
+  to = "/admin/index.html"
   status = 200
 
 # Admin-Ansicht: nicht indexieren, nicht einbetten.
@@ -17,3 +20,8 @@
     X-Robots-Tag = "noindex, nofollow"
     X-Frame-Options = "DENY"
     Referrer-Policy = "no-referrer"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"

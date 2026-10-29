@@ -2,14 +2,14 @@ import animate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  // Tailwind gilt nur für die Admin-Ansicht; die schlichte Seite nutzt src/site/site.css.
+  content: ["./admin/index.html", "./src/**/*.{js,jsx}"],
   theme: {
     container: { center: true, padding: "1rem" },
     extend: {
       fontFamily: {
         heading: "var(--font-heading)",
         body: "var(--font-body)",
-        display: "var(--font-display)",
       },
       colors: {
         border: "hsl(var(--border))",

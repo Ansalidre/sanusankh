@@ -54,7 +54,7 @@ export default function PartnerDetail() {
   return (
     <Screen title={partner.name} emergencyBar={false}>
       <SectionHeader level={1} icon={Flower2} title={partner.name} subtitle={partner.address} />
-      <Badge label={t("partner.discountBadge")} style={styles.badge} />
+      <Badge label={t(source.commission === true ? "partner.partnerBadge" : "partner.requestBadge")} style={styles.badge} />
       {translation.needsTranslation && <TranslationStatus status={translation.status} showButtons={false} />}
 
       {discount ? (
@@ -113,7 +113,7 @@ export default function PartnerDetail() {
         ) : null}
       </View>
 
-      <LegalNote>{t("partner.note")}</LegalNote>
+      <LegalNote>{source.commission === true ? `${t("partner.note")} ${t("partner.commissionNote")}` : t("partner.note")}</LegalNote>
     </Screen>
   );
 }
