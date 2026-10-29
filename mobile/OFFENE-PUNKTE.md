@@ -11,6 +11,16 @@ Die App ist so umgebaut, dass weder eine medizinische Fachprüfung noch eine anw
 
 Rechtstexte kommen aus einem Generator. **Ein Kooperationsvertrag mit Bestattern ist erst nötig, wenn eine Provision vereinbart wird (Abschnitt 3).** Bis dahin tritt Dennis als Privatperson ohne Händlerstatus auf.
 
+## 0. Direkt vor dem Livegang: Demo- und Testdaten entfernen
+
+- [ ] In den Netlify-Umgebungsvariablen darf `SEED_DEMO_PARTNERS` **nicht** gesetzt sein. Sonst legt der Server den Demo-Bestatter bei leerem Speicher wieder an.
+- [ ] Aus Netlify Blobs alle Demo- und Testdaten löschen. Löschen über das Netlify-Dashboard (*Blobs*) oder mit der Netlify-Kommandozeile (`netlify blobs:list <Store>`, `netlify blobs:delete <Store> <Schlüssel>`):
+  - Store `partners`: den Demo-Bestatter `demo-bestatter-berlin` und alle Test-Bestatter. Bestatter lassen sich auch in `/admin/` → „Bestatter“ → „Löschen“ entfernen.
+  - Store `referrals`: alle Test-Vermittlungen. Dafür gibt es in der Admin-Ansicht keinen Löschknopf.
+  - Store `counters`: Zähler aus Testanfragen (optional, sie laufen nach einer Stunde ab).
+  - Store `admin-sessions`: alte Test-Sitzungen (optional).
+- [ ] Danach in `/admin/` prüfen: Unter „Bestatter“ und „Vermittlungen“ stehen nur noch echte Einträge, die Abrechnung des laufenden Monats ist leer.
+
 ## 1. Vom Kunden einzurichten bzw. zu liefern
 
 | Was | Hinweis |
