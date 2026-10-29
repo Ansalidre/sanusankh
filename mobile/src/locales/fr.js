@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Noter tes volontés",
   "funeral.wishText": "Dans la fiche d’urgence, tu peux indiquer les pompes funèbres souhaitées et tes volontés pour les obsèques.",
 
-  "partner.section": "Partenaires",
-  "partner.note": "Les entreprises de pompes funèbres marquées « Partenaire » sont des partenaires de SanusAnkh. Si tu en choisis une, SanusAnkh reçoit une commission de sa part. Ce n'est pas une recommandation.",
+  "partner.section": "Demande directe via SanusAnkh",
+  "partner.note": "Tu peux contacter ces entreprises de pompes funèbres directement via SanusAnkh. Ce n'est pas une recommandation.",
+  "partner.commissionNote": "Les entreprises marquées « Partenaire de SanusAnkh » sont des partenaires de coopération : si tu en choisis une, SanusAnkh reçoit une commission de sa part. Tu ne paies pas plus pour autant.",
 
   "insurance.noAdvice": "SanusAnkh ne conseille pas, ne compare pas les tarifs et ne recommande aucun prestataire.",
-  "partner.discountBadge": "Partenaire – remise via SanusAnkh",
+  "partner.partnerBadge": "Partenaire de SanusAnkh",
+  "partner.requestBadge": "Demande via SanusAnkh",
   "partner.discountPercent": "{value} % de remise",
   "partner.discountAmount": "{value} de remise",
   "partner.validUntil": "valable jusqu'au {date}",

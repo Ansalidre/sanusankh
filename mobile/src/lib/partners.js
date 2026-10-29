@@ -1,6 +1,7 @@
 /*
  * Kooperations-Bestatter vom Server (GET /api/partners) mit Zwischenspeicher für den Offline-Fall
- * und Anfragen (POST /api/requests). Der Server liefert nur öffentliche Daten – keine Provision.
+ * und Anfragen (POST /api/requests). Der Server liefert nur öffentliche Daten – keine Provisionshöhe;
+ * `commission: true` heißt nur: Provisionsvereinbarung, der Provisionshinweis muss erscheinen.
  */
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";

@@ -38,13 +38,14 @@ const DEMO = [
       { id: "trauerfeier", title: "Trauerfeier", description: "Planung und Gestaltung der Trauerfeier.", priceFrom: 600 },
     ],
     contact: { email: "anfragen@example.com", webhookUrl: "", webhookSecret: "" },
-    commission: { type: "percent", value: 8 },
+    // Standard: keine Provisionsvereinbarung.
+    commission: { agreed: false, type: "percent", value: null, from: "", to: "" },
     contract: {
       status: "active",
       from: "2026-01-01",
-      to: "2027-12-31",
+      to: "",
       contactName: "Max Muster (Demo)",
-      contactEmail: "vertrag@example.com",
+      contactEmail: "kontakt@example.com",
       contactPhone: "",
     },
   },

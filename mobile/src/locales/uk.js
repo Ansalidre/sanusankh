@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Записати свої побажання",
   "funeral.wishText": "В екстреному паспорті можна вказати бажану ритуальну агенцію та побажання щодо поховання.",
 
-  "partner.section": "Партнери",
-  "partner.note": "Похоронні бюро з позначкою «Партнер» – партнери SanusAnkh. Якщо ти замовиш послуги в одного з них, SanusAnkh отримає від бюро комісію. Це не рекомендація.",
+  "partner.section": "Запит напряму через SanusAnkh",
+  "partner.note": "Цим похоронним бюро можна надіслати запит напряму через SanusAnkh. Це не рекомендація.",
+  "partner.commissionNote": "Бюро з позначкою «Партнер SanusAnkh» – партнери зі співпраці: якщо ти замовиш послуги в одного з них, SanusAnkh отримає від бюро комісію. Через це ти не платиш більше.",
 
   "insurance.noAdvice": "SanusAnkh не консультує, не порівнює тарифи та не рекомендує постачальників.",
-  "partner.discountBadge": "Партнер – знижка через SanusAnkh",
+  "partner.partnerBadge": "Партнер SanusAnkh",
+  "partner.requestBadge": "Запит через SanusAnkh",
   "partner.discountPercent": "Знижка {value} %",
   "partner.discountAmount": "Знижка {value}",
   "partner.validUntil": "діє до {date}",

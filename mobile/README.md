@@ -57,14 +57,16 @@ Der API-Key darf nicht in die App (er wäre aus dem App-Paket auslesbar). Die Ap
 
 ## Kooperations-Bestatter: Anfragen und Provisionen
 
-Nutzer können bei Kooperations-Bestattern eine Leistung anfragen und erhalten einen Rabatt. SanusAnkh erhält pro Beauftragung eine Provision vom Bestatter. **Die App wickelt keine Zahlungen ab** – Vertrag und Bezahlung laufen direkt zwischen Nutzer und Bestatter.
+Nutzer können bei freigeschalteten Bestattern eine Leistung anfragen und erhalten ggf. einen Rabatt. **Die App wickelt keine Zahlungen ab** – Vertrag und Bezahlung laufen direkt zwischen Nutzer und Bestatter.
+
+**Provision nur mit Vereinbarung:** Standardmäßig hat kein Bestatter eine Provisionsvereinbarung (Admin: Häkchen „Provisionsvereinbarung liegt vor“, mit Art, Höhe und Beginn). Ohne Vereinbarung gibt es keinen Provisionshinweis in App und E-Mails, keine Provision in der Vermittlung und keinen Meldesatz an den Bestatter. Mit Vereinbarung (und innerhalb ihres Zeitraums) heißt der Bestatter in der App „Partner von SanusAnkh“, und der Provisionshinweis erscheint in der Liste, auf der Detailseite und über dem Absenden-Knopf. Die App erfährt nur `commission: true/false`, nie die Höhe. `/api/partners` darf 5 Minuten gecacht werden – Änderungen erscheinen in der App spätestens dann.
 
 **Ablauf in der App** (Vorsorge → Bestatter):
 
-1. In der Umkreissuche erscheinen Kooperations-Bestatter als „Partner – Rabatt über SanusAnkh“.
+1. In der Umkreissuche erscheinen freigeschaltete Bestatter als „Über SanusAnkh anfragen“ (mit Vereinbarung: „Partner von SanusAnkh“).
 2. Detailseite: Rabatt mit Bedingungen, Leistungen mit Richtpreis „ab …“, Kontakt, Karte.
 3. Leistung wählen → Formular (Name, E-Mail, optional Telefon, Wunschtermin, Tageszeit, Nachricht). Bestattungswünsche aus dem Notfallpass nur per eigenem Klick, mit Vorschau.
-4. Einwilligung per Checkbox (nicht vorausgewählt). Direkt über dem Absenden-Knopf steht der Provisionshinweis: „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“
+4. Einwilligung per Checkbox (nicht vorausgewählt). Nur bei Bestattern mit Provisionsvereinbarung steht direkt über dem Absenden-Knopf: „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“
 5. Bestätigung mit Code `SA-XXXX-XXXX`; der Nutzer bekommt ihn auch per E-Mail, der Bestatter die Anfrage per E-Mail und/oder Webhook.
 6. „Meine Anfragen“ (Vorsorge) liegt nur auf dem Gerät. Zurückziehen setzt den Status auf „storniert“ und informiert den Bestatter.
 
@@ -74,7 +76,7 @@ Ohne Verbindung zeigt die App die zuletzt geladenen Partnerdaten, Anfragen sind 
 
 | Datei | Aufgabe |
 | --- | --- |
-| `functions/partners.mjs` | `GET /api/partners?country=DE` – öffentliche Partnerdaten (ohne Provision, Kontaktweg, Vertrag) |
+| `functions/partners.mjs` | `GET /api/partners?country=DE` – öffentliche Partnerdaten (ohne Provisionshöhe, Kontaktweg, Vertrag; nur `commission: true/false`) |
 | `functions/requests.mjs` | `POST /api/requests`, `POST /api/requests/withdraw` |
 | `functions/admin.mjs` | Admin-Schnittstelle `/api/admin/*` |
 | `lib/storage/` | **einziger** Speicherzugriff (Netlify Blobs; lokal JSON-Dateien in `.data/`). Für eine echte Datenbank nur dieses Modul austauschen. |
@@ -82,11 +84,11 @@ Ohne Verbindung zeigt die App die zuletzt geladenen Partnerdaten, Anfragen sind 
 | `lib/delivery.mjs`, `lib/emails.mjs` | Versand über Brevo und Webhooks, E-Mail-Texte |
 | `lib/auth.mjs` | Admin-Login |
 
-Der Server speichert pro Anfrage nur die **Vermittlung**: Code, Bestatter, Leistung, Datum, Status (angefragt → kontaktiert → beauftragt → abgerechnet / storniert), Auftragswert, Provision, Abrechnungsstatus. Name, Telefon, E-Mail und Nachricht gehen nur in die E-Mails und werden nicht gespeichert, auch nicht im Protokoll. Zurückziehen braucht neben dem Code ein Token, das nur auf dem Gerät liegt – der Bestatter, der den Code ebenfalls kennt, kann eine Anfrage also nicht im Namen des Nutzers stornieren.
+Der Server speichert pro Anfrage nur die **Vermittlung**: Code, Bestatter, Leistung, Datum, Status (angefragt → kontaktiert → beauftragt → abgerechnet / storniert), Auftragswert, Abrechnungsstatus und – nur bei Bestattern mit Provisionsvereinbarung – Provisionsmodell und Provision. Name, Telefon, E-Mail und Nachricht gehen nur in die E-Mails und werden nicht gespeichert, auch nicht im Protokoll. Zurückziehen braucht neben dem Code ein Token, das nur auf dem Gerät liegt – der Bestatter, der den Code ebenfalls kennt, kann eine Anfrage also nicht im Namen des Nutzers stornieren.
 
 **Testbetrieb:** Ohne `BREVO_API_KEY` und `MAIL_FROM` wird nichts versendet; das Protokoll enthält nur Code, Bestatter, Leistung und Zeitstempel. App und Admin-Ansicht zeigen „Testbetrieb“.
 
-**Admin-Ansicht** unter `https://<deine-domain>/admin` (nur Web): Bestatter mit Rabatt, Leistungen, Kontaktweg, Provisionsmodell und Vertrag pflegen; Vermittlungen nach Bestatter, Zeitraum und Status filtern; Status, Auftragswert, Abrechnung und interne Notiz pflegen; Monatsübersicht der Provisionen pro Bestatter mit CSV-Export. Zugang über ein gemeinsames Passwort (`ADMIN_PASSWORD`, mind. 12 Zeichen) mit zeitkonstantem Vergleich, Sperre nach Fehlversuchen und Sitzungs-Timeout.
+**Admin-Ansicht** unter `https://<deine-domain>/admin` (nur Web): Bestatter mit Rabatt, Leistungen, Kontaktweg, Freischaltung und (optional) Provisionsvereinbarung pflegen; Vermittlungen nach Bestatter, Zeitraum und Status filtern; Status, Auftragswert, Abrechnung und interne Notiz pflegen; Monatsübersicht der Provisionen pro Bestatter mit CSV-Export. Zugang über ein gemeinsames Passwort (`ADMIN_PASSWORD`, mind. 12 Zeichen) mit zeitkonstantem Vergleich, Sperre nach Fehlversuchen und Sitzungs-Timeout.
 
 **Lokal testen:** Im Hauptprojekt `.env` mit `ADMIN_PASSWORD` anlegen, `npm run dev -- --host` starten (Admin: `http://localhost:5173/admin/`, Demo-Bestatter wird automatisch angelegt) und in `mobile/.env` `EXPO_PUBLIC_API_URL=http://<LAN-IP>:5173/api` setzen. Der Demo-Bestatter erscheint nur in Entwicklungs-Builds (Expo Go).
 
@@ -96,7 +98,7 @@ Gebaut wird in der Cloud mit EAS Build – auch die iOS-App, ein Mac ist nicht n
 
 **Einmalig einrichten**
 
-1. Konten: Apple Developer Program (99 € pro Jahr; für eine Firma mit D-U-N-S-Nummer), Google Play Console (einmalig 25 USD), Expo-Konto (kostenlos).
+1. Konten: Apple Developer Program (99 € pro Jahr; als Privatperson oder als Firma mit D-U-N-S-Nummer), Google Play Console (einmalig 25 USD; Firmenkonto ebenfalls mit D-U-N-S-Nummer), Expo-Konto (kostenlos). **Kein Firebase-Projekt, keine `google-services.json`, kein Apple-Push-Schlüssel nötig:** Die Erinnerungen der Hausapotheke sind lokale Benachrichtigungen; in `app.json` ist `enableRemoteNotifications: false` gesetzt, damit iOS keine Push-Berechtigung (`aps-environment`) bekommt.
 2. `npx eas-cli@latest login` und `npx eas-cli@latest init` (verknüpft das Projekt mit dem Expo-Konto).
 3. `EXPO_PUBLIC_API_URL` (und ggf. `EXPO_PUBLIC_SITE_URL`) unter *expo.dev → Projekt → Environment variables* für die Umgebung „production“ setzen.
 4. **App Store Connect:** App mit Bundle-ID `de.sanusankh.app` anlegen. Beim ersten `npm run submit:ios` fragt EAS nach Apple-ID bzw. App-Store-Connect-API-Schlüssel und merkt sich die App (`ascAppId`). Zertifikate und Profile erstellt EAS beim ersten iOS-Build selbst.

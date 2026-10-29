@@ -7,7 +7,8 @@
  *   POST /api/requests/withdraw { code, withdrawToken } → { status: "cancelled" }
  *
  * Kontaktdaten gehen nur in die E-Mail/den Webhook an den Bestatter und die Bestätigung an den Nutzer.
- * Gespeichert wird nur die Vermittlung (Code, Bestatter, Leistung, Datum, Status) – siehe lib/model.mjs.
+ * Gespeichert wird nur die Vermittlung (Code, Bestatter, Leistung, Datum, Status; Provisionsmodell nur mit
+ * Provisionsvereinbarung) – siehe lib/model.mjs.
  * Das withdrawToken liegt nur auf dem Gerät; damit kann nur der Nutzer selbst (nicht der Bestatter,
  * der den Code ebenfalls kennt) die Anfrage zurückziehen. Gespeichert wird nur sein Hash.
  */
@@ -15,7 +16,7 @@ import crypto from "node:crypto";
 import { partnerRequestMail, partnerWithdrawMail, userConfirmationMail } from "../lib/emails.mjs";
 import { deliveryMode, sendMail, sendWebhook } from "../lib/delivery.mjs";
 import { clientKey, json, preflight, randomToken, readJson, safeEqual, sha256, today } from "../lib/http.mjs";
-import { activeDiscount, CODE_PATTERN, isEmail, isPartnerBookable, PREFERRED_TIMES, WITHDRAWABLE } from "../lib/model.mjs";
+import { activeDiscount, CODE_PATTERN, hasCommission, isEmail, isPartnerBookable, PREFERRED_TIMES, WITHDRAWABLE } from "../lib/model.mjs";
 import { counters, partners, referrals } from "../lib/storage/index.mjs";
 
 // Ohne verwechselbare Zeichen (0/O, 1/I).
@@ -86,6 +87,8 @@ async function createRequest(req, context) {
   const service = partner.services.find((s) => s.id === form.serviceId);
   if (!service) return reply(404, { error: "service_unavailable" });
   const discount = activeDiscount(partner, day);
+  // Provision nur mit Provisionsvereinbarung; sonst bleibt die Vermittlung ohne Provisionsmodell.
+  const commission = hasCommission(partner, day);
 
   const withdrawToken = randomToken(24);
   const createdAt = new Date().toISOString();
@@ -104,7 +107,7 @@ async function createRequest(req, context) {
       history: [{ status: "requested", at: createdAt, by: "user" }],
       orderValue: null,
       commission: null,
-      commissionModel: { ...partner.commission },
+      commissionModel: commission ? { type: partner.commission.type, value: partner.commission.value } : null,
       billingStatus: "none",
       discount,
       note: "",
@@ -115,7 +118,7 @@ async function createRequest(req, context) {
   if (!referral) return reply(500, { error: "code_failed" });
 
   const meta = { code: referral.code, partnerId: partner.id, serviceId: service.id };
-  const mailData = { partner, service, referral, form, discount };
+  const mailData = { partner, service, referral, form, discount, commission };
   const channels = [];
   if (partner.contact.email) channels.push(sendMail(partnerRequestMail(mailData), meta));
   if (partner.contact.webhookUrl) {

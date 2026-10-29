@@ -7,8 +7,10 @@
  *   discount  { type: "percent" | "amount" | "none", value, conditions, validFrom, validTo }   – öffentlich
  *   services  [{ id, title, description, priceFrom }]                                          – öffentlich
  *   contact   { email, webhookUrl, webhookSecret }                                             – NUR Server
- *   commission{ type: "percent" | "fixed", value }                                             – NUR Server/Admin
+ *   commission{ agreed, type: "percent" | "fixed", value, from, to }                           – NUR Server/Admin
+ *               agreed=false (Standard): keine Provisionsvereinbarung → kein Provisionshinweis, keine Provision
  *   contract  { status: "draft" | "active" | "paused" | "ended", from, to, contactName, contactEmail, contactPhone } – NUR Server/Admin
+ *               Freischaltung in der App (kein Vertrag nötig); from/to optional
  *
  * Vermittlung (gespeichert unter referrals/<code>), ohne Kontaktdaten des Nutzers:
  *   code, partnerId, partnerName, serviceId, serviceTitle, country, currency, createdAt,
@@ -126,10 +128,20 @@ export function normalizePartner(input) {
   const contact = { email: contactEmail, webhookUrl: webhookUrl || "", webhookSecret: str(c.webhookSecret, 100) };
 
   const m = p.commission || {};
+  const commissionAgreed = m.agreed === true;
   const commissionType = m.type === "fixed" ? "fixed" : "percent";
   const commissionValue = num(m.value);
-  if (commissionValue == null || Number.isNaN(commissionValue) || commissionValue < 0) err("commission.value", "Zahl ≥ 0");
-  if (commissionType === "percent" && commissionValue > 100) err("commission.value", "höchstens 100 %");
+  const commission = { agreed: commissionAgreed, type: commissionType, value: null, from: date(m.from), to: date(m.to) };
+  if (commissionAgreed) {
+    if (commissionValue == null || Number.isNaN(commissionValue) || !(commissionValue > 0)) err("commission.value", "Wert größer 0 angeben");
+    if (commissionType === "percent" && commissionValue > 100) err("commission.value", "höchstens 100 %");
+    if (!commission.from) err("commission.from", "Beginn der Vereinbarung angeben");
+    if (commission.from && commission.to && commission.from > commission.to) err("commission", "Beginn liegt nach dem Ende");
+    commission.value = commissionValue;
+  } else if (commissionValue != null && !Number.isNaN(commissionValue)) {
+    // Vorbereiteter Wert bleibt erhalten, gilt aber erst mit Vereinbarung.
+    commission.value = commissionValue;
+  }
 
   const k = p.contract || {};
   const contract = {
@@ -143,7 +155,6 @@ export function normalizePartner(input) {
   if (contract.from && contract.to && contract.from > contract.to) err("contract", "Beginn liegt nach dem Ende");
   if (contract.contactEmail && !isEmail(contract.contactEmail)) err("contract.contactEmail", "ungültige E-Mail");
   if (contract.status === "active") {
-    if (!contract.from || !contract.to) err("contract", "aktiver Vertrag braucht Beginn und Ende");
     if (!services.length) err("services", "mindestens eine Leistung");
     if (!contact.email && !contact.webhookUrl) err("contact", "E-Mail oder Webhook für Anfragen angeben");
     if (lat == null) err("lat/lon", "für die Umkreissuche erforderlich");
@@ -169,7 +180,7 @@ export function normalizePartner(input) {
       discount,
       services,
       contact,
-      commission: { type: commissionType, value: commissionValue },
+      commission,
       contract,
     },
   };
@@ -179,7 +190,7 @@ function inRange(day, from, to) {
   return (!from || day >= from) && (!to || day <= to);
 }
 
-/** Partner erscheint in der App: aktiv, Vertrag aktiv und im Vertragszeitraum. */
+/** Partner erscheint in der App: aktiv, freigeschaltet und im Freischaltungszeitraum (falls angegeben). */
 export function isPartnerVisible(partner, day) {
   return Boolean(partner?.active && partner.contract?.status === "active" && inRange(day, partner.contract.from, partner.contract.to));
 }
@@ -189,13 +200,19 @@ export function isPartnerBookable(partner, day) {
   return isPartnerVisible(partner, day) && partner.services?.length > 0 && Boolean(partner.contact?.email || partner.contact?.webhookUrl);
 }
 
+/** Provisionsvereinbarung liegt vor und gilt heute. Nur dann Provisionshinweis und Provision. */
+export function hasCommission(partner, day) {
+  const c = partner?.commission;
+  return Boolean(c?.agreed && c.value > 0 && inRange(day, c.from, c.to));
+}
+
 export function activeDiscount(partner, day) {
   const d = partner?.discount;
   if (!d || d.type === "none" || !(d.value > 0) || !inRange(day, d.validFrom, d.validTo)) return null;
   return { type: d.type, value: d.value, conditions: d.conditions, validTo: d.validTo };
 }
 
-/** Öffentliche Sicht für die App – ohne Provision, Vertrag und Kontaktweg. */
+/** Öffentliche Sicht für die App – ohne Provisionshöhe, Vertrag und Kontaktweg; `commission` sagt nur, ob ein Hinweis nötig ist. */
 export function publicPartner(partner, day) {
   const website =
     partner.website && partner.tracking ? `${partner.website}${partner.website.includes("?") ? "&" : "?"}${partner.tracking}` : partner.website;
@@ -215,6 +232,7 @@ export function publicPartner(partner, day) {
     discount: activeDiscount(partner, day),
     services: partner.services.map(({ id, title, description, priceFrom }) => ({ id, title, description, priceFrom })),
     bookable: isPartnerBookable(partner, day),
+    commission: hasCommission(partner, day),
   };
 }
 

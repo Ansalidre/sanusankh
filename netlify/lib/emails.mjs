@@ -25,7 +25,7 @@ function germanDate(iso) {
 
 const line = (label, value) => (value ? `${label}: ${value}\n` : "");
 
-export function partnerRequestMail({ partner, service, referral, form, discount }) {
+export function partnerRequestMail({ partner, service, referral, form, discount, commission }) {
   const preferred = [germanDate(form.preferredDate), form.preferredTime && form.preferredTime !== "any" ? TIMES[form.preferredTime] : ""]
     .filter(Boolean)
     .join(", ");
@@ -38,7 +38,7 @@ export function partnerRequestMail({ partner, service, referral, form, discount 
       `Guten Tag,\n\nüber die App SanusAnkh ist eine Anfrage für ${partner.name} eingegangen.\n\n` +
       line("Rabattcode", referral.code) +
       line("Leistung", service.title) +
-      line("Rabatt laut Kooperationsvertrag", discountText(discount, partner.currency)) +
+      line(commission ? "Rabatt laut Kooperationsvertrag" : "Rabatt laut Ihrem Angebot", discountText(discount, partner.currency)) +
       "\n" +
       line("Name", form.name) +
       line("Telefon", form.phone) +
@@ -48,12 +48,12 @@ export function partnerRequestMail({ partner, service, referral, form, discount 
       (form.wishes ? `\nVom Nutzer angehängte Bestattungswünsche:\n${form.wishes}\n` : "") +
       `\nDie Person hat am ${germanDate(referral.createdAt)} ausdrücklich in die Übermittlung dieser Angaben an ${partner.name} eingewilligt. ` +
       "Bitte verwenden Sie die Daten nur zur Bearbeitung dieser Anfrage.\n\n" +
-      "Bitte melden Sie eingelöste Codes und Auftragswerte wie im Kooperationsvertrag vereinbart.\n\n" +
+      (commission ? "Bitte melden Sie eingelöste Codes und Auftragswerte wie im Kooperationsvertrag vereinbart.\n\n" : "") +
       "Antworten auf diese E-Mail gehen direkt an die anfragende Person.\n\nSanusAnkh",
   };
 }
 
-export function userConfirmationMail({ partner, service, referral, form, discount }) {
+export function userConfirmationMail({ partner, service, referral, form, discount, commission }) {
   return {
     kind: "request.user",
     to: form.email,
@@ -66,7 +66,7 @@ export function userConfirmationMail({ partner, service, referral, form, discoun
       line("Bestatter", [partner.name, partner.address, partner.phone].filter(Boolean).join(", ")) +
       "\nBitte gib den Code beim Bestatter an, damit der Rabatt berücksichtigt wird. " +
       "Vertrag und Bezahlung vereinbarst du direkt mit dem Bestatter; über SanusAnkh wird nichts bezahlt.\n\n" +
-      "SanusAnkh erhält bei einer Beauftragung eine Vermittlungsprovision vom Bestatter. Für dich entstehen dadurch keine Mehrkosten.\n\n" +
+      (commission ? "SanusAnkh erhält bei einer Beauftragung eine Vermittlungsprovision vom Bestatter. Für dich entstehen dadurch keine Mehrkosten.\n\n" : "") +
       "Du kannst die Anfrage in der App unter „Vorsorge → Meine Anfragen“ zurückziehen.\n\n" +
       `Your request has been forwarded to ${partner.name}. Please quote code ${referral.code} to receive the discount.\n\n` +
       "SanusAnkh",

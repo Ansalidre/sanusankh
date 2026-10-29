@@ -48,7 +48,7 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 > Eine Checkliste für Verbandsmaterial und Hilfsmittel mit Erinnerung an Ablaufdaten. Welche Arzneimittel in deine Hausapotheke gehören, klärst du mit deiner Apotheke.
 >
 > **Vorsorge**
-> Informationen zu Patientenverfügung, Vorsorgevollmacht und Bestattung, Bestatter in deiner Nähe und neutrale Informationen zur Sterbegeldversicherung. Bei Kooperations-Bestattern kannst du direkt eine Anfrage stellen und erhältst einen Rabatt. Beauftragst du einen Kooperations-Bestatter, erhält SanusAnkh von ihm eine Provision – du zahlst dadurch nicht mehr.
+> Informationen zu Patientenverfügung, Vorsorgevollmacht und Bestattung, Bestatter in deiner Nähe und neutrale Informationen zur Sterbegeldversicherung. Bei ausgewählten Bestattern kannst du direkt eine Anfrage stellen, teils mit Rabatt.
 >
 > **Assistent**
 > Stell Fragen zur App, zu Anlaufstellen wie Notdienst-Apotheken und zur Vorsorge. Gesundheitsfragen beantwortet der Assistent nicht, er verweist dafür auf 112, den ärztlichen Bereitschaftsdienst oder deine Hausarztpraxis.
@@ -60,9 +60,22 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 >
 > **Wichtig:** SanusAnkh ist kein Medizinprodukt und ersetzt keine ärztliche Beratung. Bei Lebensgefahr immer sofort 112 anrufen.
 
+Sobald es eine Provisionsvereinbarung gibt, den Satz ergänzen: „Beauftragst du einen Partner-Bestatter, erhält SanusAnkh von ihm eine Provision – du zahlst dadurch nicht mehr.“
+
+## Händlerstatus (EU-Gesetz über digitale Dienste)
+
+Beide Stores fragen, ob der Anbieter als **Händler** („Trader“) auftritt. Für Händler werden Anschrift, Telefon und E-Mail im Store öffentlich angezeigt.
+
+| Store | Wo | Angabe vorerst |
+| --- | --- | --- |
+| App Store Connect | Kontoeinstellungen, Abschnitt zum Digital Services Act (wird spätestens beim Einreichen für die EU abgefragt) | **kein Händler** |
+| Google Play Console | Entwicklerkonto-Einstellungen, Abschnitt „Händlerstatus“ (EU) | **kein Händler** |
+
+Begründung vorerst: Dennis veröffentlicht die App als Privatperson, sie ist kostenlos, ohne Werbung, ohne In-App-Käufe und ohne Provision. **Mit einer Provisionsvereinbarung ändert sich das:** dann Gewerbe anmelden, in beiden Stores Händlerstatus angeben, Anschrift und Telefon werden öffentlich, und das Impressum entsprechend anpassen.
+
 ## Hinweis für die App-Prüfung (App Review Notes / Play Console)
 
-> SanusAnkh is not a medical device. The app does not ask about symptoms or evaluate user input. It shows a fixed, general list of warning signs for calling the emergency number 112 and links to first-aid pages of recognised aid organisations (German Red Cross, Johanniter, Malteser). The AI assistant answers questions about the app, local services and planning ahead. It does not answer health questions and refers users to 112, the out-of-hours medical service or their doctor. No account is required. Funeral requests: users can send a request to a partner funeral director; the request is forwarded by e-mail; no payments are processed in the app.
+> SanusAnkh is not a medical device. The app does not ask about symptoms or evaluate user input. It shows a fixed, general list of warning signs for calling the emergency number 112 and links to first-aid pages of recognised aid organisations (German Red Cross, Johanniter, Malteser). The AI assistant answers questions about the app, local services and planning ahead. It does not answer health questions and refers users to 112, the out-of-hours medical service or their doctor. No account is required. Funeral requests: users can send a request to a listed funeral director; the request is forwarded by e-mail; no payments are processed in the app. The app uses only local notifications (expiry reminders for the first-aid kit), no push notifications.
 
 Wenn die Prüfer die Bestatter-Anfrage ausprobieren sollen, vorher in der Admin-Ansicht einen Test-Bestatter in einer bekannten Stadt anlegen und die Stadt hier nennen.
 

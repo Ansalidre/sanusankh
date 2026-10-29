@@ -15,7 +15,17 @@ export const BILLING_LABELS = {
   paid: "bezahlt",
 };
 
-export const CONTRACT_LABELS = { draft: "Entwurf", active: "aktiv", paused: "pausiert", ended: "beendet" };
+/** Freischaltung in der App (früher „Kooperationsvertrag“; ein Vertrag ist dafür nicht nötig). */
+export const CONTRACT_LABELS = { draft: "vorbereitet", active: "freigeschaltet", paused: "pausiert", ended: "beendet" };
+
+/**
+ * Provisionsmodell als kurzer Text – für das Modell einer Vermittlung oder die Provision eines Partners
+ * (dort mit `agreed`). Ohne Vereinbarung „keine Vereinbarung“.
+ */
+export function commissionText(model, currency) {
+  if (!model || model.agreed === false || model.value == null) return "keine Vereinbarung";
+  return model.type === "fixed" ? `fest ${money(model.value, currency)}` : `${model.value} %`;
+}
 
 export const STATUS_STYLES = {
   requested: "bg-secondary text-secondary-foreground",

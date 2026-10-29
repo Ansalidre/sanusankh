@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Deine Wünsche festhalten",
   "funeral.wishText": "Im Notfallpass kannst du einen gewünschten Bestatter und deine Wünsche zur Bestattung eintragen.",
 
-  "partner.section": "Partner",
-  "partner.note": "Mit „Partner“ gekennzeichnete Bestatter sind Kooperationspartner von SanusAnkh. Beauftragst du einen von ihnen, bekommt SanusAnkh vom Bestatter eine Provision. Das ist keine Empfehlung.",
+  "partner.section": "Direkt über SanusAnkh anfragen",
+  "partner.note": "Diese Bestatter kannst du direkt über SanusAnkh anfragen. Das ist keine Empfehlung.",
+  "partner.commissionNote": "Mit „Partner von SanusAnkh“ gekennzeichnete Bestatter sind Kooperationspartner: Beauftragst du einen von ihnen, bekommt SanusAnkh vom Bestatter eine Provision. Du zahlst dadurch nicht mehr.",
 
   "insurance.noAdvice": "SanusAnkh berät nicht, vergleicht keine Tarife und empfiehlt keinen Anbieter.",
-  "partner.discountBadge": "Partner – Rabatt über SanusAnkh",
+  "partner.partnerBadge": "Partner von SanusAnkh",
+  "partner.requestBadge": "Über SanusAnkh anfragen",
   "partner.discountPercent": "{value} % Rabatt",
   "partner.discountAmount": "{value} Rabatt",
   "partner.validUntil": "gültig bis {date}",

@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "سجّل رغباتك",
   "funeral.wishText": "يمكنك في بطاقة الطوارئ إدخال مكتب الدفن المفضّل ورغباتك بشأن الدفن.",
 
-  "partner.section": "الشركاء",
-  "partner.note": "متعهدو الدفن المميزون بـ«شريك» هم شركاء تعاون لـ SanusAnkh. إذا كلّفت أحدهم، تحصل SanusAnkh على عمولة من متعهد الدفن. هذا ليس توصية.",
+  "partner.section": "اطلب مباشرة عبر SanusAnkh",
+  "partner.note": "يمكنك التواصل مع متعهدي الدفن هؤلاء مباشرة عبر SanusAnkh. هذا ليس توصية.",
+  "partner.commissionNote": "متعهدو الدفن المميزون بـ«شريك SanusAnkh» هم شركاء تعاون: إذا كلّفت أحدهم، تحصل SanusAnkh على عمولة من متعهد الدفن. لن تدفع أكثر بسبب ذلك.",
 
   "insurance.noAdvice": "لا يقدّم SanusAnkh استشارة ولا يقارن الأسعار ولا يوصي بأي مقدّم خدمة.",
-  "partner.discountBadge": "شريك – خصم عبر SanusAnkh",
+  "partner.partnerBadge": "شريك SanusAnkh",
+  "partner.requestBadge": "اطلب عبر SanusAnkh",
   "partner.discountPercent": "خصم {value}٪",
   "partner.discountAmount": "خصم {value}",
   "partner.validUntil": "صالح حتى {date}",

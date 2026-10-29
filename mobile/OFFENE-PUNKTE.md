@@ -7,8 +7,9 @@ Die App ist so umgebaut, dass weder eine medizinische Fachprüfung noch eine anw
 - Keine Arzneimittel in der Hausapotheke.
 - KI ohne Gesundheitsberatung.
 - Keine vergüteten Versicherungslinks.
+- Vorerst keine Provision von Bestattern: Kein Bestatter hat eine Provisionsvereinbarung, die App zeigt keinen Provisionshinweis.
 
-Rechtstexte kommen aus einem Generator. **Einziger Punkt für jemanden mit Rechtskenntnis ist der Kooperationsvertrag mit den Bestattern (Abschnitt 3).**
+Rechtstexte kommen aus einem Generator. **Ein Kooperationsvertrag mit Bestattern ist erst nötig, wenn eine Provision vereinbart wird (Abschnitt 3).** Bis dahin tritt Dennis als Privatperson ohne Händlerstatus auf.
 
 ## 1. Vom Kunden einzurichten bzw. zu liefern
 
@@ -19,12 +20,14 @@ Rechtstexte kommen aus einem Generator. **Einziger Punkt für jemanden mit Recht
 | Netlify-Konto | Repository verbinden, Umgebungsvariablen setzen (siehe `../README.md`) |
 | Brevo-Konto | Absenderdomain verifizieren (SPF/DKIM), API-Schlüssel nach `BREVO_API_KEY`, Absender nach `MAIL_FROM` |
 | Anthropic-Konto | API-Schlüssel nach `ANTHROPIC_API_KEY`, **monatliches Ausgabenlimit** setzen |
-| Apple Developer Program | Für eine Firma: D-U-N-S-Nummer (kostenlos, einige Tage Vorlauf) |
-| Google Play Console | Bei einem neuen privaten Konto ist vor der Produktion ein geschlossener Test mit mindestens 12 Testern über 14 Tage nötig |
+| Apple Developer Program | Vorerst als Privatperson (Name erscheint im App Store). D-U-N-S-Nummer nur für ein Firmenkonto. |
+| Google Play Console | Vorerst als Privatperson: vor der Produktion geschlossener Test mit mindestens 12 Testern über 14 Tage. Firmenkonto bräuchte eine D-U-N-S-Nummer. |
+| Händlerstatus (EU) in beiden Stores | Vorerst „kein Händler“ (siehe [STORE-TEXTE.md](STORE-TEXTE.md)) |
+| Firebase / Push | **Nicht nötig.** Erinnerungen der Hausapotheke sind lokale Mitteilungen, kein Push-Schlüssel, keine `google-services.json`. |
 | Expo-Konto | Kostenlos, für die Cloud-Builds |
 | Angaben für Impressum und Datenschutzerklärung | Siehe [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md), Abschnitt 1 |
 | Standardverträge zur Auftragsverarbeitung | Netlify, Brevo, Anthropic: gelten mit dem Konto. Aktuelle Fassung herunterladen und ablegen (Links in [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md), Abschnitt 4). |
-| Kooperations-Bestatter | Pflege in der Admin-Ansicht `/admin/` → „Bestatter“: Name, Adresse, Koordinaten, Telefon, Website, Rabatt mit Bedingungen, Leistungen mit Richtpreisen, E-Mail für Anfragen, Provisionsmodell, Vertrag von/bis, Ansprechpartner |
+| Bestatter, die über die App angefragt werden können | Zustimmung des Bestatters per E-Mail genügt (gelistet werden, Anfragen bekommen, Daten nur für die Anfrage nutzen). Pflege in `/admin/` → „Bestatter“: Name, Adresse, Koordinaten, Telefon, Website, Rabatt mit Bedingungen, Leistungen mit Richtpreisen, E-Mail für Anfragen, Freischaltung, Ansprechpartner. „Provisionsvereinbarung liegt vor“ **nicht** ankreuzen. |
 | Logo als Vektordatei (SVG) oder in höherer Auflösung | `assets/brand/` – Icons wurden aus dem 1254-px-JPG erzeugt |
 | Store-Screenshots | iPhone und Android |
 | Telemedizin-Partner und Online-Apotheke | Derzeit Platzhalter („Demnächst verfügbar“) in `src/app/telemedicine.js` und `src/app/pharmacy.js` |
@@ -38,9 +41,16 @@ Rechtstexte kommen aus einem Generator. **Einziger Punkt für jemanden mit Recht
 | Datenschutzangaben in App Store Connect („App-Datenschutz“) und Play Console („Datensicherheit“) | Vorschlag in [STORE-TEXTE.md](STORE-TEXTE.md) |
 | Store-Links auf der Webseite eintragen | `index.html` im Hauptprojekt (App-Store-ID nach Anlage der App) |
 
-## 3. Einmal von jemandem mit Rechtskenntnis ansehen lassen: Kooperationsvertrag mit Bestattern
+## 3. Erst wenn eine Provision kommt: Kooperationsvertrag, Gewerbe, Händlerstatus
 
-Das ist der einzige Punkt mit Rechtsbezug, den der Generator nicht abdeckt. Ein Mustervertrag für alle Bestatter genügt. Er sollte mindestens regeln:
+Vorerst entfällt dieser Abschnitt. Sobald mit einem Bestatter eine Provision vereinbart werden soll:
+
+1. **Gewerbe anmelden**, Steuerfragen (Umsatzsteuer, Kleinunternehmerregelung) mit der Steuerberatung klären.
+2. **Händlerstatus** in App Store Connect und Google Play auf „Händler“ ändern – Anschrift und Telefon werden dann im Store öffentlich. Impressum und Datenschutzerklärung im Generator neu erzeugen.
+3. **Kooperationsvertrag** einmal von jemandem mit Rechtskenntnis ansehen lassen (einziger Punkt mit Rechtsbezug, den der Generator nicht abdeckt).
+4. Erst dann in `/admin/` beim Bestatter „Provisionsvereinbarung liegt vor“ ankreuzen (Art, Höhe, Beginn). Ab dann zeigt die App den Provisionshinweis, und die Vermittlungen bekommen eine Provision. In [STORE-TEXTE.md](STORE-TEXTE.md) den Provisionssatz in die Beschreibung aufnehmen.
+
+Ein Mustervertrag für alle Bestatter genügt. Er sollte mindestens regeln:
 
 - **Keine Mehrkosten für Nutzer:** Der Rabatt wird nicht durch Preisaufschläge finanziert. Die App sagt den Nutzern: „Du zahlst dadurch nicht mehr.“
 - **Provision:** Höhe (Prozent oder fester Betrag), wann sie fällig wird (Beauftragung) und wie abgerechnet wird.
@@ -49,13 +59,13 @@ Das ist der einzige Punkt mit Rechtsbezug, den der Generator nicht abdeckt. Ein 
 - **Rabatt:** Höhe, Bedingungen und Gültigkeitszeitraum wie in der Admin-Ansicht hinterlegt.
 - Laufzeit, Kündigung, Ansprechpartner.
 
-**Provisionshinweis in der App** (direkt über dem Absenden-Knopf, bewusst einfach): „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“ In der Bestatter-Liste steht zusätzlich: „Mit ‚Partner‘ gekennzeichnete Bestatter sind Kooperationspartner von SanusAnkh. Beauftragst du einen von ihnen, bekommt SanusAnkh vom Bestatter eine Provision. Das ist keine Empfehlung.“
+**Provisionshinweis in der App** (nur bei Bestattern mit Vereinbarung; direkt über dem Absenden-Knopf, bewusst einfach): „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“ Diese Bestatter heißen in der App „Partner von SanusAnkh“; in Liste und Detailseite steht zusätzlich: „Mit ‚Partner von SanusAnkh‘ gekennzeichnete Bestatter sind Kooperationspartner: Beauftragst du einen von ihnen, bekommt SanusAnkh vom Bestatter eine Provision. Du zahlst dadurch nicht mehr.“ Ohne Vereinbarung steht dort nur: „Diese Bestatter kannst du direkt über SanusAnkh anfragen. Das ist keine Empfehlung.“
 
 ## 4. Entscheidungen des Kunden
 
 | Was | Stand |
 | --- | --- |
-| Speicherdauer der Vermittlungsdaten (Code, Bestatter, Leistung, Datum, Status, Auftragswert) | Derzeit unbegrenzt. Frist festlegen (Aufbewahrungspflichten für Abrechnungsunterlagen ggf. mit der Steuerberatung klären) und in der Datenschutzerklärung nennen. |
+| Speicherdauer der Vermittlungsdaten (Code, Bestatter, Leistung, Datum, Status, Auftragswert) | Derzeit unbegrenzt. Frist festlegen und in der Datenschutzerklärung nennen. Aufbewahrungspflichten für Abrechnungsunterlagen werden erst mit einer Provision relevant. |
 | Missbrauch mit fremder E-Mail-Adresse | Schutz derzeit: höchstens 5 Anfragen pro Stunde je Herkunft. Optional Bestätigung per E-Mail-Link (Double-Opt-in) nachrüsten. |
 | E-Mail-Texte an Bestatter und Nutzer | `../netlify/lib/emails.mjs`; Nutzer-E-Mail auf Deutsch mit kurzem englischem Absatz |
 | Ansprache „du“ in der App | Durchgehend „du“, auch im Provisionshinweis |
@@ -84,3 +94,5 @@ Das sind Sachangaben, keine medizinischen Inhalte. Prüfen gegen die offiziellen
 | Einstufung als Medizinprodukt (EU-MDR) | Keine Abfrage, keine Auswertung, keine Dringlichkeitsstufen, KI ohne Gesundheitsberatung, Store-Texte ohne medizinische Zweckbestimmung |
 | Versicherungsvermittlung (§ 34d GewO) und Werbekennzeichnung bei Sterbegeld-Partnern | Keine Anbieter, keine Vergütung, kein Tracking mehr – nur eine neutrale Erklärung mit Link zur Verbraucherzentrale |
 | Anwaltliche Prüfung von Datenschutzerklärung, Impressum und Haftungsausschluss | Generator; feste „Nutzungshinweise“ in der App ohne Platzhalter |
+| Kooperationsvertrag, Gewerbeanmeldung, Händlerstatus | Vorerst keine Provision; erst nötig, wenn eine Provision vereinbart wird (Abschnitt 3) |
+| Firebase-Projekt, Apple-Push-Schlüssel | Nur lokale Erinnerungen; iOS ohne Push-Berechtigung (`enableRemoteNotifications: false`) |

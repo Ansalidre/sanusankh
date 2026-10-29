@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Annota le tue volontà",
   "funeral.wishText": "Nella scheda emergenza puoi indicare un’impresa funebre desiderata e le tue volontà per il funerale.",
 
-  "partner.section": "Partner",
-  "partner.note": "Le imprese funebri contrassegnate come “Partner” sono partner di SanusAnkh. Se ne incarichi una, SanusAnkh riceve una provvigione dall’impresa funebre. Non è una raccomandazione.",
+  "partner.section": "Richiesta diretta tramite SanusAnkh",
+  "partner.note": "Puoi contattare queste imprese funebri direttamente tramite SanusAnkh. Non è una raccomandazione.",
+  "partner.commissionNote": "Le imprese contrassegnate come “Partner di SanusAnkh” sono partner di cooperazione: se ne incarichi una, SanusAnkh riceve una provvigione dall’impresa funebre. Non paghi di più per questo.",
 
   "insurance.noAdvice": "SanusAnkh non offre consulenza, non confronta tariffe e non raccomanda alcun fornitore.",
-  "partner.discountBadge": "Partner – sconto tramite SanusAnkh",
+  "partner.partnerBadge": "Partner di SanusAnkh",
+  "partner.requestBadge": "Richiesta tramite SanusAnkh",
   "partner.discountPercent": "Sconto del {value}%",
   "partner.discountAmount": "Sconto di {value}",
   "partner.validUntil": "valido fino al {date}",

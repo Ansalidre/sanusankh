@@ -23,7 +23,7 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 | Datenschutzbeauftragter, nur falls einer bestellt ist | Datenschutzerklärung |
 | Zuständige Datenschutz-Aufsichtsbehörde (nach Sitz des Anbieters) | Datenschutzerklärung, Beschwerderecht |
 | Teilnahme an Verbraucherstreitbeilegung: ja/nein | Impressum |
-| Speicherdauer der Vermittlungsdaten (siehe Abschnitt 3), vom Kunden festzulegen | Datenschutzerklärung |
+| Speicherdauer der Vermittlungsdaten (siehe Abschnitt 3), vom Kunden festzulegen. Ohne Provision gibt es keine Abrechnungsunterlagen; Aufbewahrungspflichten werden erst mit einer Provision relevant. | Datenschutzerklärung |
 
 ## 2. Eingesetzte Dienste
 
@@ -34,13 +34,13 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 | **Anthropic** (KI) | Anthropic Ireland, Limited (Vertragspartner für EU-Kunden); Verarbeitung durch Anthropic, PBC, USA | KI-Assistent und Übersetzung von App-Inhalten | Text der Frage, Sprache, gewähltes Land; zu übersetzende App-Texte (keine Personendaten) | Auftragsverarbeiter, Übermittlung in die USA möglich |
 | **OpenStreetMap Foundation** | OSMF, Vereinigtes Königreich | Karten (tile.openstreetmap.org), Suche nach Apotheken und Kliniken (Overpass-API), Ortssuche für Bestatter (Nominatim) | IP-Adresse; Standort-Koordinaten (nur nach Freigabe, nur für die Suche); eingegebener Ort bzw. eingegebene Postleitzahl | eigener Verantwortlicher ([Datenschutzerklärung der OSMF](https://osmfoundation.org/wiki/Privacy_Policy)) |
 | **Apple App Store / Google Play** | Apple Inc. / Google Ireland Ltd. | Bereitstellung und Updates der App | Store-Konto, Download, ggf. Absturzberichte (wenn der Nutzer sie freigibt) | eigene Verantwortliche |
-| **Kooperations-Bestatter** | jeweiliger Partner | Bearbeitung der Anfrage | Anfrage-Daten (siehe Brevo), per E-Mail und ggf. Webhook | eigener Verantwortlicher (im Kooperationsvertrag festhalten) |
+| **Bestatter, die über die App angefragt werden können** | jeweiliger Bestatter | Bearbeitung der Anfrage | Anfrage-Daten (siehe Brevo), per E-Mail und ggf. Webhook | eigener Verantwortlicher (bei der Zustimmung zur Listung festhalten; mit Provision im Kooperationsvertrag) |
 
 **Ohne Datenübermittlung:**
 
 - Tracking, Werbe- und Analyse-Dienste.
 - Konten.
-- Push-Dienst: Erinnerungen sind lokale Mitteilungen auf dem Gerät.
+- Push-Dienst und Firebase: Erinnerungen sind lokale Mitteilungen auf dem Gerät; kein Push-Token, kein Firebase-Projekt (die von Expo mitgelieferte Firebase-Bibliothek wird ohne `google-services.json` nicht gestartet).
 - Externe Schriften: in der App mitgeliefert, die Webseite nutzt Systemschriften.
 - Expo: nur zum Bauen der App, die App sendet zur Laufzeit nichts an Expo.
 
@@ -64,7 +64,7 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 | KI-Assistent | Frage eintippen und senden | – | Frage, Sprache, Land → Netlify → Anthropic. Es wird nichts gespeichert. |
 | Übersetzung von App-Inhalten (Vorsorge-Texte, Leistungen der Bestatter) | bei Sprache ≠ Deutsch | Übersetzung nur im Arbeitsspeicher | App-Texte → Netlify → Anthropic (keine Personendaten) |
 | Bestatter suchen | Ort/PLZ oder Standort | – | Ort/PLZ und Land → OSM Nominatim; Land → Netlify (Partnerliste) |
-| Anfrage an Kooperations-Bestatter | Formular, Einwilligung per Checkbox (nicht vorausgewählt), Bestattungswünsche nur per eigenem Klick | „Meine Anfragen“ (Code, Bestatter, Leistung, Datum) | Anfrage-Daten → Netlify → Brevo (E-Mail an Bestatter und Bestätigung an den Nutzer) und ggf. Webhook an den Bestatter. Auf dem Server gespeichert nur: Code, Bestatter, Leistung, Datum, Status, Auftragswert, Provision. Name, E-Mail, Telefon und Nachricht werden nicht gespeichert. |
+| Anfrage an einen Bestatter | Formular, Einwilligung per Checkbox (nicht vorausgewählt), Bestattungswünsche nur per eigenem Klick | „Meine Anfragen“ (Code, Bestatter, Leistung, Datum) | Anfrage-Daten → Netlify → Brevo (E-Mail an Bestatter und Bestätigung an den Nutzer) und ggf. Webhook an den Bestatter. Auf dem Server gespeichert nur: Code, Bestatter, Leistung, Datum, Status, Auftragswert; Provision nur bei Bestattern mit Provisionsvereinbarung (derzeit keiner). Name, E-Mail, Telefon und Nachricht werden nicht gespeichert. |
 | Missbrauchsschutz | höchstens 5 Anfragen pro Stunde | – | täglich wechselnder, nicht umkehrbarer Wert aus der IP-Adresse (die IP selbst wird nicht gespeichert) |
 | Anfrage zurückziehen | Code + Geräteschlüssel | – | Netlify (Status „storniert“), E-Mail an den Bestatter über Brevo |
 | Admin-Ansicht (nur Betreiber) | Login mit Passwort | – | technisch notwendiges Sitzungs-Cookie, nur unter `/admin` |

@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "İsteklerini kaydet",
   "funeral.wishText": "Acil durum kartına tercih ettiğin cenaze hizmetini ve cenazeyle ilgili isteklerini yazabilirsin.",
 
-  "partner.section": "Partnerler",
-  "partner.note": "“Partner” olarak işaretlenen cenaze hizmetleri firmaları SanusAnkh'ın iş ortaklarıdır. Birini görevlendirirsen SanusAnkh firmadan komisyon alır. Bu bir tavsiye değildir.",
+  "partner.section": "Doğrudan SanusAnkh üzerinden talep",
+  "partner.note": "Bu cenaze hizmetleri firmalarına doğrudan SanusAnkh üzerinden talep gönderebilirsin. Bu bir tavsiye değildir.",
+  "partner.commissionNote": "“SanusAnkh partneri” olarak işaretlenen firmalar iş ortaklarıdır: Birini görevlendirirsen SanusAnkh firmadan komisyon alır. Bu nedenle daha fazla ödemezsin.",
 
   "insurance.noAdvice": "SanusAnkh danışmanlık yapmaz, tarifeleri karşılaştırmaz ve sağlayıcı önermez.",
-  "partner.discountBadge": "Partner – SanusAnkh üzerinden indirim",
+  "partner.partnerBadge": "SanusAnkh partneri",
+  "partner.requestBadge": "SanusAnkh üzerinden talep",
   "partner.discountPercent": "%{value} indirim",
   "partner.discountAmount": "{value} indirim",
   "partner.validUntil": "{date} tarihine kadar geçerli",

@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Record your wishes",
   "funeral.wishText": "In the emergency pass you can enter a preferred funeral director and your wishes for the funeral.",
 
-  "partner.section": "Partners",
-  "partner.note": "Funeral directors marked “Partner” are cooperation partners of SanusAnkh. If you hire one of them, SanusAnkh gets a commission from the funeral director. This is not a recommendation.",
+  "partner.section": "Request directly via SanusAnkh",
+  "partner.note": "You can contact these funeral directors directly via SanusAnkh. This is not a recommendation.",
+  "partner.commissionNote": "Funeral directors marked “SanusAnkh partner” are cooperation partners: if you hire one of them, SanusAnkh gets a commission from the funeral director. You don't pay more because of this.",
 
   "insurance.noAdvice": "SanusAnkh gives no advice, does not compare tariffs and recommends no provider.",
-  "partner.discountBadge": "Partner – discount via SanusAnkh",
+  "partner.partnerBadge": "SanusAnkh partner",
+  "partner.requestBadge": "Request via SanusAnkh",
   "partner.discountPercent": "{value}% discount",
   "partner.discountAmount": "{value} discount",
   "partner.validUntil": "valid until {date}",

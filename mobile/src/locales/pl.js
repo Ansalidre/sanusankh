@@ -361,11 +361,13 @@ export default {
   "funeral.wishTitle": "Zapisz swoje życzenia",
   "funeral.wishText": "W karcie ratunkowej możesz wpisać preferowany zakład pogrzebowy i swoje życzenia dotyczące pogrzebu.",
 
-  "partner.section": "Partnerzy",
-  "partner.note": "Zakłady pogrzebowe oznaczone jako „Partner” to partnerzy SanusAnkh. Jeśli zlecisz usługę jednemu z nich, SanusAnkh otrzyma od zakładu prowizję. To nie jest rekomendacja.",
+  "partner.section": "Zapytanie bezpośrednio przez SanusAnkh",
+  "partner.note": "Do tych zakładów pogrzebowych możesz wysłać zapytanie bezpośrednio przez SanusAnkh. To nie jest rekomendacja.",
+  "partner.commissionNote": "Zakłady oznaczone jako „Partner SanusAnkh” to partnerzy współpracy: jeśli zlecisz usługę jednemu z nich, SanusAnkh otrzyma od zakładu prowizję. Nie płacisz przez to więcej.",
 
   "insurance.noAdvice": "SanusAnkh nie doradza, nie porównuje taryf i nie poleca żadnego dostawcy.",
-  "partner.discountBadge": "Partner – rabat przez SanusAnkh",
+  "partner.partnerBadge": "Partner SanusAnkh",
+  "partner.requestBadge": "Zapytanie przez SanusAnkh",
   "partner.discountPercent": "{value}% rabatu",
   "partner.discountAmount": "{value} rabatu",
   "partner.validUntil": "ważne do {date}",
