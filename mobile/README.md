@@ -1,8 +1,10 @@
 # SanusAnkh – App für iOS und Android
 
-Native App (React Native mit Expo SDK 58 und Expo Router): 112-Schnellzugriff, 18 Erste-Hilfe-Anleitungen mit Takt-Hilfe, Symptom-Check mit Ampel, Notrufnummern je Land, Apotheken- und Kliniksuche, Hausapotheke mit Ablauf-Erinnerung, Notfallpass (inkl. Patientenverfügung und Bestattungswünschen), Bereich „Vorsorge“ (Patientenverfügung, Bestatter in der Nähe, Sterbegeld-Partnerangebote), Verlauf und KI-Assistent – in 9 Sprachen (DE, EN, TR, AR mit RTL, RU, UK, PL, IT, FR) und für 7 Länder vorbereitet (DE vollständig; AT, CH, IT, FR, TR, PL mit Notrufnummern).
+Native App (React Native mit Expo SDK 58 und Expo Router): 112-Schnellzugriff, allgemeine Warnzeichen („Wann 112 anrufen?“), 18 Erste-Hilfe-Themen mit Links zu DRK, Johanniter und Malteser, Notrufnummern je Land, Apotheken- und Kliniksuche, Checkliste Hausapotheke (Verbandsmaterial und Hilfsmittel) mit Ablauf-Erinnerung, Notfallpass (inkl. Patientenverfügung und Bestattungswünschen), Bereich „Vorsorge“ (Patientenverfügung, Bestatter in der Nähe mit Anfragen bei Kooperations-Bestattern, neutrale Info zur Sterbegeldversicherung) und KI-Assistent für Fragen zur App, zu Anlaufstellen und zur Vorsorge – in 9 Sprachen (DE, EN, TR, AR mit RTL, RU, UK, PL, IT, FR) und für 7 Länder vorbereitet (DE vollständig; AT, CH, IT, FR, TR, PL mit Notrufnummern).
 
-Keine Konten, keine Datenbank: Notfallpass, Vorsorge-Angaben, Hausapotheke, Verlauf und Einstellungen liegen nur auf dem Gerät (AsyncStorage, Namespace `sanusankh.v1`; Foto der Verfügung im privaten App-Ordner). Gepflegte Inhalte (Länder, Hausapotheke, Vorsorge-Texte, Anbieter) sind JSON-Dateien in `src/content/`.
+**Zweckbestimmung:** SanusAnkh ist kein Medizinprodukt. Die App fragt keine Beschwerden ab, wertet keine Eingaben aus, stellt keine Diagnosen, bewertet keine Dringlichkeit und gibt keine Behandlungs- oder Medikamentenempfehlungen. Sie formuliert keine eigenen Erste-Hilfe-Anleitungen, sondern verlinkt anerkannte Hilfsorganisationen. Diese Grenzen gelten auch für den KI-Assistenten (Systemprompt in `../netlify/functions/assistant.mjs`) und für die Store-Texte ([STORE-TEXTE.md](STORE-TEXTE.md)). Neue Funktionen bitte daran messen.
+
+Keine Konten: Notfallpass, Vorsorge-Angaben, Hausapotheke und Einstellungen liegen nur auf dem Gerät (AsyncStorage, Namespace `sanusankh.v1`; Foto der Verfügung im privaten App-Ordner). Gepflegte Inhalte (Länder, Hausapotheke, Vorsorge-Texte) sind JSON-Dateien in `src/content/`.
 
 **Sprache ≠ Land:** Die Sprache steuert nur die Texte. Das Land (Einstellung „Land“, beim ersten Start mit Vorschlag aus der Geräteregion abgefragt) steuert Notrufnummern, Kacheln und länderspezifische Inhalte. Der 112-Knopf funktioniert in allen Ländern.
 
@@ -12,11 +14,13 @@ Keine Konten, keine Datenbank: Notfallpass, Vorsorge-Angaben, Hausapotheke, Verl
 cd mobile
 npm install
 npx expo start          # QR-Code mit der App „Expo Go“ scannen (iPhone und Android)
-npm run lint
+npm run check           # lint + check:i18n + check:content
 npm run check:i18n      # alle Sprachen haben dieselben Schlüssel und Platzhalter wie Deutsch
-npm run check:content   # Inhalte in src/content/ (Pflichtfelder, Freigaben, keine Dosierungen, Partnerverträge)
+npm run check:content   # Inhalte: Pflichtfelder, keine Arzneimittel in der Hausapotheke, Erste Hilfe nur als Links
 npx expo-doctor         # prüft Abhängigkeiten und Konfiguration
 ```
+
+Alle verwendeten Module sind in Expo Go enthalten – zum Ausprobieren auf dem eigenen Handy ist kein Mac und kein eigener Build nötig. Telefon-Links, Standort und Vibration funktionieren nur auf einem echten Gerät. `npx expo start --web` startet eine Browser-Vorschau nur zum Testen; veröffentlicht wird die App ausschließlich in den Stores.
 
 ## Neue Sprache hinzufügen in 3 Schritten
 
@@ -25,57 +29,42 @@ npx expo-doctor         # prüft Abhängigkeiten und Konfiguration
    `{ code: "es", label: "Español", flag: "🇪🇸", dir: "ltr", speech: "es-ES", messages: es }` (für Rechts-nach-links-Sprachen `dir: "rtl"`).
 3. **Prüfen:** `npm run check:i18n`. Das Skript meldet fehlende, leere oder überzählige Schlüssel und abweichende Platzhalter.
 
-Komponenten müssen nicht geändert werden. Fehlt ein Text in einer Sprache, zeigt die App den deutschen Text, nie einen leeren Text oder den Schlüsselnamen.
+Optional: In `src/data/warningSigns.js` und `firstAidGuides.js` die Titel um `es: "…"` ergänzen (sonst Deutsch) und den Sprachcode in der KI-Funktion (`../netlify/functions/assistant.mjs`, `LANGUAGES`) eintragen.
 
-Optional:
-- In den Inhaltsdaten (`src/data/redFlags.js`, `firstAidGuides.js`, `symptomFlows.js`) Einträge `es: "…"` ergänzen. Fehlen sie, gilt Deutsch bzw. die KI-Übersetzung. Für die Warnzeichen empfehlen wir feste Übersetzungen, damit der Notfallweg ohne Netz funktioniert.
-- Den Sprachcode in der KI-Funktion (`../netlify/functions/assistant.mjs`, `LANGUAGES`) eintragen.
+## Inhalte pflegen
 
-## Inhalte pflegen (`src/content/`)
-
-Länder-, Hausapotheken-, Vorsorge- und Sterbegeld-Daten liegen als JSON-Dateien im Projekt, nicht im Code. Änderungen erfolgen in der Datei, dann `npm run check:content`, dann ein neuer Build oder ein Update. **Kooperations-Bestatter** liegen dagegen auf dem Server und werden in der Admin-Ansicht gepflegt (siehe [Kooperations-Bestatter](#kooperations-bestatter-anfragen-und-provisionen)).
-
-| Datei | Inhalt | Wichtige Felder |
+| Datei | Inhalt | Regeln |
 | --- | --- | --- |
-| `countries.json` | Länder (ISO-Code) mit Nummern | `numbers[].kind`: emergency, ambulance, fire, police, oncall, advice, poison (mit `number` oder `regions`), crisis, crisisAlt; optional `taxiShortcode`, `pharmacyDuty` |
-| `medicineCabinet.json` | Hausapotheke je Land (`country: "*"` = alle) | `kind`: supply / medicine, `status`: unreviewed / reviewed, `reviewedBy`, `reviewedAt`, `source` |
-| `careInfo.json` | Vorsorge-Texte je Land und Thema | `topic`: directive / insurance / funeral, `sections`, `links` |
-| `providers.json` | Sterbegeld-Anbieter | `type: "insurance"`, `country`, `website`, `logo`, `partner`, `contractFrom`/`contractTo`, `priority`, `active`, `tracking` |
+| `src/data/warningSigns.js` | Allgemeine Warnzeichen für „Wann 112 anrufen?“ | Für alle gleich, keine Abfrage, keine Auswertung; Titel in allen 9 Sprachen |
+| `src/data/firstAidGuides.js` | 18 Erste-Hilfe-Themen | Nur Titel und Links (`links: [{ org, url }]`) zu `drk`, `johanniter`, `malteser` – keine eigenen Schritte. Links zuletzt geprüft am 29.10.2026 |
+| `src/content/countries.json` | Länder (ISO-Code) mit Nummern | `numbers[].kind`: emergency, ambulance, fire, police, oncall, advice, poison (mit `number` oder `regions`), crisis, crisisAlt |
+| `src/content/medicineCabinet.json` | Checkliste Hausapotheke | Nur `kind: "supply"` mit neutraler Beschreibung – keine Arzneimittel, keine Anwendungshinweise |
+| `src/content/careInfo.json` | Vorsorge-Texte je Land und Thema | `topic`: directive / insurance / funeral, `sections`, `links` |
 
-Regeln, die die App und `check:content` durchsetzen:
+`npm run check:content` setzt diese Regeln durch. **Kooperations-Bestatter** liegen auf dem Server und werden in der Admin-Ansicht gepflegt (siehe unten). Sterbegeld-Anbieter gibt es nicht mehr – die Seite „Sterbegeldversicherung“ zeigt nur eine neutrale Erklärung mit Link zur Verbraucherzentrale.
 
-- **Arzneimittel:** nur als Wirkstoffgruppe bzw. allgemeine Bezeichnung, ohne Dosierung. Das Skript lehnt Mengenangaben wie „500 mg“ oder „3 x täglich“ ab. Jeder Eintrag zeigt in der App „Frag in deiner Apotheke nach dem passenden Präparat. Packungsbeilage beachten.“
-- **Freigabe:** Ein Arzneimittel erscheint im Store-Build erst mit `"status": "reviewed"`, und zwar mit Name der prüfenden Person (`reviewedBy`) und Datum (`reviewedAt`). In Entwicklungs-Builds (Expo Go) sind ungeprüfte Einträge mit dem Hinweis „Ungeprüft“ sichtbar. Hat ein Land keine geprüften Arzneimittel, zeigt die App nur Hilfsmittel und „Länderspezifische Empfehlungen folgen“.
-- **Partner:** Sie werden nur innerhalb des Vertragszeitraums hervorgehoben und immer als „Anzeige“ bzw. „Partnerangebot“ gekennzeichnet. Die Seite „Sterbegeldversicherung“ erscheint nur, wenn das Land mindestens einen aktiven Versicherungspartner hat. `tracking` (z. B. `utm_source=sanusankh`) wird an die Website angehängt und darf keine personenbezogenen Parameter enthalten.
-- **Demo-Einträge:** Einträge mit `"demo": true` erscheinen nur in Entwicklungs-Builds. Demo-Anbieter vor dem Start durch echte Partnerdaten ersetzen oder löschen.
-- **Klickzählung:** Partnerklicks werden nicht gezählt. Auswertung über die `utm`-Parameter in der Statistik des Partners.
+## Serveradresse, KI-Assistent und Rechtstexte
 
-Alle verwendeten Module sind in Expo Go enthalten – zum Ausprobieren auf dem eigenen Handy ist kein Mac und kein eigener Build nötig. Telefon-Links, Standort, Vibration und Ton funktionieren nur auf einem echten Gerät, nicht im Simulator.
+Der API-Key darf nicht in die App (er wäre aus dem App-Paket auslesbar). Die App ruft die Serverfunktionen aus dem Hauptprojekt auf:
 
-`npx expo start --web` startet zusätzlich eine Browser-Vorschau. Sie dient nur zum schnellen Testen; Ziel sind die Store-Apps.
-
-## KI-Assistent
-
-Der API-Key darf nicht in die App (er wäre aus dem App-Paket auslesbar). Die App ruft deshalb die Serverfunktion aus dem Hauptprojekt auf (`../netlify/functions/assistant.mjs`, Pfad `/api/assistant`):
-
-1. Hauptprojekt bei Netlify deployen und dort `ANTHROPIC_API_KEY` als Umgebungsvariable setzen (siehe `../README.md`).
-2. In `mobile/` die Datei `.env.example` nach `.env` kopieren und `EXPO_PUBLIC_API_URL` auf `https://<deine-seite>.netlify.app/api` setzen (Basisadresse für KI, Bestatter und Anfragen; ältere Werte mit `/assistant` am Ende funktionieren weiter).
+1. Hauptprojekt bei Netlify deployen und dort die Umgebungsvariablen setzen (siehe `../README.md`).
+2. In `mobile/` die Datei `.env.example` nach `.env` kopieren und `EXPO_PUBLIC_API_URL` auf `https://<deine-domain>/api` setzen.
 3. Für EAS-Builds dieselbe Variable unter *expo.dev → Projekt → Environment variables* hinterlegen.
 
-Ohne Adresse läuft die App ohne KI: Der Assistent zeigt einen Hinweis; Anleitungen, Symptom-Fragen, Hausapotheke und Vorsorge-Texte erscheinen auf Deutsch. Menüs, Titel, Warnzeichen und Notfallanweisungen sind fest in allen 9 Sprachen hinterlegt und funktionieren auch offline.
+**Impressum und Datenschutzerklärung** stehen nur auf der Webseite der Domain (`/impressum/`, `/datenschutz/`, Dateien im Hauptprojekt). Die App verlinkt dorthin; die Adresse wird aus `EXPO_PUBLIC_API_URL` abgeleitet (`…/api` → `…`) oder mit `EXPO_PUBLIC_SITE_URL` gesetzt. Fest in der App stehen nur die „Nutzungshinweise“ (`src/app/legal/[page].js`).
 
-An den Server gehen nur die Frage, die Sprache, das Land und ggf. Anleitungstext als Kontext. Notfallpass, Vorsorge-Angaben und Hausapotheke werden nie übertragen. Die KI-Regeln im System-Prompt verbieten Medikamenten- und Dosierungsempfehlungen, Rechts- und Versicherungsberatung sowie Empfehlungen bestimmter Bestatter oder Versicherer.
+**KI-Assistent:** Standardmodell Claude Haiku 5.5. Er beantwortet Fragen zur App, zu Anlaufstellen und zur Vorsorge. Gesundheitsfragen beantwortet er nicht, sondern verweist auf 112, den ärztlichen Bereitschaftsdienst oder die Hausarztpraxis; unter jeder Antwort steht fest „Im Notfall: 112 anrufen“. Die App bewertet Fragen nicht. An den Server gehen nur Frage, Sprache und Land – nie Notfallpass, Vorsorge-Angaben oder Hausapotheke. Ohne Serveradresse zeigt der Assistent einen Hinweis; alles andere funktioniert, Menüs, Warnzeichen und Themen auch offline.
 
 ## Kooperations-Bestatter: Anfragen und Provisionen
 
-Nutzer können bei Kooperations-Bestattern eine Leistung verbindlich anfragen und erhalten einen Rabatt. SanusAnkh erhält pro Beauftragung eine Provision. **Die App wickelt keine Zahlungen ab** – Vertrag und Bezahlung laufen direkt zwischen Nutzer und Bestatter.
+Nutzer können bei Kooperations-Bestattern eine Leistung anfragen und erhalten einen Rabatt. SanusAnkh erhält pro Beauftragung eine Provision vom Bestatter. **Die App wickelt keine Zahlungen ab** – Vertrag und Bezahlung laufen direkt zwischen Nutzer und Bestatter.
 
 **Ablauf in der App** (Vorsorge → Bestatter):
 
 1. In der Umkreissuche erscheinen Kooperations-Bestatter als „Partner – Rabatt über SanusAnkh“.
 2. Detailseite: Rabatt mit Bedingungen, Leistungen mit Richtpreis „ab …“, Kontakt, Karte.
 3. Leistung wählen → Formular (Name, E-Mail, optional Telefon, Wunschtermin, Tageszeit, Nachricht). Bestattungswünsche aus dem Notfallpass nur per eigenem Klick, mit Vorschau.
-4. Einwilligung per Checkbox (nicht vorausgewählt), Provisionshinweis direkt über dem Absenden-Knopf.
+4. Einwilligung per Checkbox (nicht vorausgewählt). Direkt über dem Absenden-Knopf steht der Provisionshinweis: „Gut zu wissen: Wenn du diesen Bestatter beauftragst, bekommt SanusAnkh von ihm eine Provision. Du zahlst dadurch nicht mehr.“
 5. Bestätigung mit Code `SA-XXXX-XXXX`; der Nutzer bekommt ihn auch per E-Mail, der Bestatter die Anfrage per E-Mail und/oder Webhook.
 6. „Meine Anfragen“ (Vorsorge) liegt nur auf dem Gerät. Zurückziehen setzt den Status auf „storniert“ und informiert den Bestatter.
 
@@ -97,82 +86,61 @@ Der Server speichert pro Anfrage nur die **Vermittlung**: Code, Bestatter, Leist
 
 **Testbetrieb:** Ohne `BREVO_API_KEY` und `MAIL_FROM` wird nichts versendet; das Protokoll enthält nur Code, Bestatter, Leistung und Zeitstempel. App und Admin-Ansicht zeigen „Testbetrieb“.
 
-**Admin-Ansicht** unter `https://<deine-seite>.netlify.app/admin` (nur Web): Bestatter mit Rabatt, Leistungen, Kontaktweg, Provisionsmodell und Vertrag pflegen; Vermittlungen nach Bestatter, Zeitraum und Status filtern; Status, Auftragswert, Abrechnung und interne Notiz pflegen; Monatsübersicht der Provisionen pro Bestatter mit CSV-Export. Ein Bestatter erscheint in der App nur bei Vertragsstatus „aktiv“ innerhalb der Laufzeit. Die Provision wird nach dem Modell berechnet, das bei der Anfrage galt.
+**Admin-Ansicht** unter `https://<deine-domain>/admin` (nur Web): Bestatter mit Rabatt, Leistungen, Kontaktweg, Provisionsmodell und Vertrag pflegen; Vermittlungen nach Bestatter, Zeitraum und Status filtern; Status, Auftragswert, Abrechnung und interne Notiz pflegen; Monatsübersicht der Provisionen pro Bestatter mit CSV-Export. Zugang über ein gemeinsames Passwort (`ADMIN_PASSWORD`, mind. 12 Zeichen) mit zeitkonstantem Vergleich, Sperre nach Fehlversuchen und Sitzungs-Timeout.
 
-Zugang: ein gemeinsames Passwort (`ADMIN_PASSWORD`, mind. 12 Zeichen) mit zeitkonstantem Vergleich, wachsender Verzögerung nach Fehlversuchen und 15 Minuten Sperre nach 5 Fehlversuchen. Die Sitzung läuft nach 30 Minuten Inaktivität bzw. spätestens nach 8 Stunden ab (HttpOnly-Cookie, `SameSite=Strict`).
+**Lokal testen:** Im Hauptprojekt `.env` mit `ADMIN_PASSWORD` anlegen, `npm run dev -- --host` starten (Admin: `http://localhost:5173/admin/`, Demo-Bestatter wird automatisch angelegt) und in `mobile/.env` `EXPO_PUBLIC_API_URL=http://<LAN-IP>:5173/api` setzen. Der Demo-Bestatter erscheint nur in Entwicklungs-Builds (Expo Go).
 
-**Lokal testen:** Im Hauptprojekt `.env` mit `ADMIN_PASSWORD` anlegen, `npm run dev -- --host` starten (Admin: `http://localhost:5173/admin`, Demo-Bestatter wird automatisch angelegt) und in `mobile/.env` `EXPO_PUBLIC_API_URL=http://<LAN-IP>:5173/api` setzen. Der Demo-Bestatter erscheint nur in Entwicklungs-Builds (Expo Go).
+## Veröffentlichung im App Store und bei Google Play
 
-## Builds und Veröffentlichung (ohne Mac)
+Gebaut wird in der Cloud mit EAS Build – auch die iOS-App, ein Mac ist nicht nötig. Store-Texte und Datenschutzangaben: [STORE-TEXTE.md](STORE-TEXTE.md).
 
-Gebaut wird in der Cloud mit EAS Build – auch die iOS-App, ein Mac ist nicht nötig.
+**Einmalig einrichten**
+
+1. Konten: Apple Developer Program (99 € pro Jahr; für eine Firma mit D-U-N-S-Nummer), Google Play Console (einmalig 25 USD), Expo-Konto (kostenlos).
+2. `npx eas-cli@latest login` und `npx eas-cli@latest init` (verknüpft das Projekt mit dem Expo-Konto).
+3. `EXPO_PUBLIC_API_URL` (und ggf. `EXPO_PUBLIC_SITE_URL`) unter *expo.dev → Projekt → Environment variables* für die Umgebung „production“ setzen.
+4. **App Store Connect:** App mit Bundle-ID `de.sanusankh.app` anlegen. Beim ersten `npm run submit:ios` fragt EAS nach Apple-ID bzw. App-Store-Connect-API-Schlüssel und merkt sich die App (`ascAppId`). Zertifikate und Profile erstellt EAS beim ersten iOS-Build selbst.
+5. **Google Play Console:** App mit Paketname `de.sanusankh.app` anlegen. Die **allererste** Version einmal von Hand hochladen (Google verlangt das vor jeder API-Einreichung): `npm run build:android`, die `.aab` von expo.dev herunterladen und in der Play Console unter „Interner Test“ hochladen. Danach ein Dienstkonto mit Play-Console-Zugriff anlegen und dessen JSON-Schlüssel als `mobile/secrets/google-play-service-account.json` speichern (der Ordner ist in `.gitignore`).
+
+**Jede neue Version**
 
 ```bash
-npx eas-cli@latest login
-npx eas-cli@latest init                                       # verknüpft das Projekt mit deinem Expo-Konto
-npx eas-cli@latest build --platform android --profile preview # Test-APK zum direkten Installieren
-npx eas-cli@latest build --platform all --profile production  # Store-Builds (AAB + IPA)
-npx eas-cli@latest submit --platform android                  # Upload in die Google Play Console
-npx eas-cli@latest submit --platform ios                      # Upload zu App Store Connect / TestFlight
+cd mobile
+npm run build            # prüft (lint, Sprachen, Inhalte) und baut Android (AAB) und iOS (IPA)
+npm run submit           # reicht die neuesten Builds bei Google Play und App Store Connect ein
+# einzeln: npm run build:android / build:ios, npm run submit:android / submit:ios
 ```
 
-Voraussetzungen:
-
-- **Apple Developer Program** (99 USD/Jahr) – EAS erstellt Zertifikate und Profile beim ersten iOS-Build selbst.
-- **Google Play Console** (einmalig 25 USD). Neue private Entwicklerkonten müssen vor der Veröffentlichung einen geschlossenen Test (mind. 12 Tester, 14 Tage) durchlaufen.
+- Die Versionsnummer für die Nutzer steht in `app.json` (`version`); Build-Nummern zählt EAS selbst hoch (`appVersionSource: remote`, `autoIncrement`).
+- **Google Play:** `submit:android` lädt in den Track „internal“ als Entwurf hoch (`eas.json`). Von dort in der Play Console in „Geschlossener Test“ bzw. „Produktion“ übernehmen. Neue private Entwicklerkonten brauchen vor der Produktion einen geschlossenen Test (mind. 12 Tester, 14 Tage).
+- **App Store:** `submit:ios` lädt zu App Store Connect hoch; dort die Version mit Build, Texten und Screenshots zur Prüfung einreichen. Vorher über TestFlight testen.
+- Kleine Text- oder Inhaltsänderungen ohne neuen Store-Build wären mit EAS Update möglich (derzeit nicht eingerichtet).
 
 ## Vor der Veröffentlichung
 
-- [ ] **Medizinprodukt-Frage klären:** Ein Symptom-Check, der Dringlichkeitsstufen ausgibt, kann nach EU-MDR (Regel 11) als Medizinprodukt-Software gelten. Vor dem Store-Start regulatorisch prüfen lassen – davon hängen Zulassung, Haftung und Store-Freigabe ab.
-- [ ] **Bundle-ID / Paketname** `de.sanusankh.app` (in `app.json`) durch eine eigene Kennung ersetzen, falls dir die Domain nicht gehört. Nach der ersten Store-Veröffentlichung nicht mehr änderbar.
-- [ ] **Rechtstexte** in `src/app/legal/[page].js`: alle gelb markierten `[Platzhalter]` ersetzen und juristisch prüfen lassen.
-- [ ] **Datenschutzerklärung als Webseite:** Beide Stores verlangen eine öffentliche URL (z. B. die `/datenschutz`-Seite der Web-Version auf Netlify – Inhalt an die App-Fassung angleichen).
-- [ ] **Store-Angaben zum Datenschutz** (App Privacy / Data Safety): keine Konten, kein Tracking; Standort nur auf Anfrage und nicht gespeichert; Fragen an den Assistenten werden an den Server und Anthropic übertragen.
-- [ ] **Google Play:** Erklärung zu Gesundheits-Apps im Play-Console-Formular ausfüllen. **Apple:** In der Beschreibung klarstellen, dass die App keine Diagnosen stellt (Richtlinie 1.4.1).
-- [ ] **Telefonnummern** (`src/content/countries.json`) und **medizinische Inhalte** (`src/data/*.js`, `src/content/medicineCabinet.json`) fachlich prüfen lassen.
-- [ ] **KI-Server absichern:** Die Funktion ist öffentlich erreichbar. Vor dem Start ein Ausgabenlimit im Anthropic-Konto setzen und eine Ratenbegrenzung einbauen.
-- [ ] **OpenStreetMap:** Kachel- und Overpass-Server der OSMF sind für geringe Last gedacht. Bei vielen Nutzern einen kommerziellen Anbieter verwenden.
-- [ ] Store-Screenshots, Beschreibung in den 9 Sprachen, Altersfreigabe-Fragebogen.
-- [ ] **Fachliche Prüfungen und Kundenlieferungen:** siehe [OFFENE-PUNKTE.md](OFFENE-PUNKTE.md).
-- [ ] **Store-Datenschutzangaben ergänzen:** Kamera/Fotos (nur für das Foto der Verfügung, bleibt auf dem Gerät), lokale Mitteilungen, Ortssuche über Nominatim, Partnerlinks mit UTM-Parametern.
+Siehe [OFFENE-PUNKTE.md](OFFENE-PUNKTE.md) (Kundenlieferungen, Konten, Rechtstexte aus dem Generator) und [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md). Technisch zusätzlich:
 
-## Unterschiede zur Web-Version
-
-| Thema | Web | App |
-| --- | --- | --- |
-| Speicher | localStorage | AsyncStorage, beim Start in den Arbeitsspeicher geladen |
-| Schriften | Google Fonts (extern) | im App-Paket (`@expo-google-fonts`), keine Übertragung an Google |
-| Arabisch / RTL | `dir="rtl"` am `<html>` | `direction: "rtl"` im Layout – wechselt sofort, ohne Neustart (I18nManager bräuchte einen App-Neustart) |
-| Startsprache | Deutsch | Gerätesprache, falls unterstützt, sonst Deutsch |
-| Land | nur Deutschland | Einstellung „Land“, beim ersten Start bestätigt (Vorschlag aus der Geräteregion) |
-| Navigation | Kopfleiste + untere Leiste | 5 Tabs (Start, Symptom-Check, Anleitungen, Notfallpass, Mehr), Unterseiten als Stack |
-| Route | OpenStreetMap im Browser | Apple Karten bzw. Karten-App-Auswahl unter Android |
-| Standort verweigert | Hinweis | Hinweis + Knopf „Einstellungen öffnen“ |
-| Metronom | Web Audio + `navigator.vibrate` | Klick-Datei (`assets/sounds/click.wav`, auch im Stummmodus) + Haptik; Bildschirm bleibt an |
-| Notfallpass-Vollbild | eigene Seite | Vollbild-Modal, Bildschirm bleibt an |
-| Übersetzungs-Cache | sessionStorage | Arbeitsspeicher (pro App-Sitzung) |
-| Bestätigungen | Dialoge | native Systemdialoge (`Alert`) |
-
-Deutscher Originaltext ohne KI-Übersetzung wird in der arabischen Oberfläche automatisch links-nach-rechts gesetzt.
+- [ ] **Bundle-ID / Paketname** `de.sanusankh.app` (in `app.json`) ersetzen, falls die Domain nicht dem Kunden gehört. Nach der ersten Veröffentlichung nicht mehr änderbar.
+- [ ] **KI-Server:** Ausgabenlimit im Anthropic-Konto setzen; die Funktion ist öffentlich erreichbar und hat noch keine Ratenbegrenzung.
+- [ ] **OpenStreetMap:** Kachel-, Overpass- und Nominatim-Server der OSMF sind für geringe Last gedacht. Bei vielen Nutzern einen kommerziellen Anbieter verwenden.
+- [ ] Store-Screenshots (iPhone, Android), Altersfreigabe-Fragebogen in beiden Stores.
 
 ## Struktur
 
 ```
-app.json, eas.json           App-Konfiguration (Berechtigungen, Icons) und Cloud-Build-Profile
-assets/                      Icons, Splash (aus brand/logo.jpg), images/emblem.png, sounds/click.wav
-scripts/                     check-i18n.mjs, check-content.mjs, make-click.mjs (erzeugt den Klickton)
+app.json, eas.json           App-Konfiguration (Berechtigungen, Icons, iOS-Privacy-Manifest) und Build-/Einreichungsprofile
+assets/                      Icons, Splash (aus brand/logo.jpg), images/emblem.png
+scripts/                     check-i18n.mjs, check-content.mjs
 src/app/                     Bildschirme (Expo Router)
-  (tabs)/                    index, triage, guides, pass, more
-  guide/[slug]  profile/…    Anleitung, Notfallpass anlegen/bearbeiten/Vollbild
-  cabinet                    Hausapotheke
-  care/                      Vorsorge: index, directive, funeral, insurance
-  numbers, pharmacy, telemedicine, transport, hospitals, history, legal/[page]
-src/components/              Screen, AppHeader, EmergencyCallButton, CountryPicker, CareInfo, Triage-, Such- und Formular-Bausteine
+  (tabs)/                    index, emergency (Warnzeichen), guides (Erste-Hilfe-Themen), pass, more
+  guide/[slug]  profile/…    Erste-Hilfe-Thema mit Links, Notfallpass anlegen/bearbeiten/Vollbild
+  cabinet                    Hausapotheke (Checkliste)
+  care/                      Vorsorge: index, directive, funeral, partner/[id], request, sent, requests, insurance
+  numbers, pharmacy, telemedicine, transport, hospitals, legal/[page]
+src/components/              Screen, AppHeader, EmergencyCallButton, SourceLinks, CountryPicker, CareInfo, Such- und Formular-Bausteine
   ui/                        Text, Button, Card, CheckRow, TextField, SelectField, OptionSheet, Collapsible, Toast …
-src/content/                 gepflegte Inhalte als JSON: countries, medicineCabinet, careInfo, providers
-src/data/                    Sprachkonfiguration (languages.js) und Erste-Hilfe-Inhalte (Anleitungen, Abläufe, Warnzeichen)
+src/content/                 gepflegte Inhalte als JSON: countries, medicineCabinet, careInfo
+src/data/                    Sprachkonfiguration (languages.js), Warnzeichen, Erste-Hilfe-Themen
 src/locales/                 eine Datei pro Sprache (de, en, tr, ar, ru, uk, pl, it, fr)
-src/lib/                     i18n (Sprache + Land), translations, content, storage, ai, geo, links, reminders, scans, theme
+src/lib/                     i18n (Sprache + Land), content, storage, api, ai, partners, geo, links, reminders, scans, theme
 ```
-
-Die Erste-Hilfe-Inhalte in `src/data/` stammen aus der Web-Version. Die Web-Version wird nicht mehr weiterentwickelt und dient nur noch als Server für die KI-Funktion.
