@@ -14,11 +14,12 @@ import { useI18n } from "@/lib/i18n";
 import { colors } from "@/lib/theme";
 
 /**
- * KI-Assistent: Frage stellen, Antwort anzeigen, bei Dringlichkeit 112-Hinweis.
- * Übertragen werden nur die Frage, die Sprache, das Land und ggf. `context` (Inhalte der Seite) –
- * niemals Notfallpass-, Vorsorge- oder Hausapotheken-Daten.
+ * KI-Assistent für Fragen zur App, zu Notdiensten und zur Vorsorge – keine Gesundheitsberatung.
+ * Die App bewertet Fragen nicht: Der 112-Hinweis steht fest unter jeder Antwort.
+ * Übertragen werden nur die Frage, die Sprache und das Land – niemals Notfallpass-, Vorsorge-
+ * oder Hausapotheken-Daten.
  */
-export default function AssistantPanel({ context }) {
+export default function AssistantPanel() {
   const { t, lang, oncall, country } = useI18n();
   const chips = [oncall ? "assistant.chip1" : "assistant.chip1NoOncall", "assistant.chip2", "assistant.chip3"];
   const [question, setQuestion] = useState("");
@@ -30,7 +31,7 @@ export default function AssistantPanel({ context }) {
     setQuestion(q);
     setState({ status: "loading" });
     try {
-      const result = await askAssistant({ question: q, language: lang, country: country.code, context });
+      const result = await askAssistant({ question: q, language: lang, country: country.code });
       setState({ status: "done", ...result });
     } catch {
       setState({ status: "error" });
@@ -82,11 +83,11 @@ export default function AssistantPanel({ context }) {
         {state.status === "error" && <Notice>{t(oncall ? "assistant.error" : "assistant.errorNoOncall")}</Notice>}
         {state.status === "done" && (
           <>
-            {state.urgent && <EmergencyCallButton label={t("assistant.urgent")} />}
             <View style={styles.answer}>
               <H3 color={colors.primary}>{t("assistant.answer")}</H3>
               <T selectable>{state.answer}</T>
             </View>
+            <EmergencyCallButton pulse={false} label={t("assistant.always112")} />
           </>
         )}
       </View>
