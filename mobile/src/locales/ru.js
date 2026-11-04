@@ -2,7 +2,7 @@
 
 export default {
   "brand.name": "SanusAnkh",
-  "brand.tagline": "Первая помощь и гид по здоровью",
+  "brand.tagline": "Экстренный вызов, забота о будущем и измерения",
 
   "nav.home": "Главная",
   "nav.emergency": "Экстренно",

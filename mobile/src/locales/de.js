@@ -2,7 +2,7 @@
 
 export default {
   "brand.name": "SanusAnkh",
-  "brand.tagline": "Erste Hilfe & Gesundheitslotse",
+  "brand.tagline": "Notruf, Vorsorge & Messwerte",
 
   "nav.home": "Start",
   "nav.emergency": "Notfall",

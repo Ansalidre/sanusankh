@@ -11,9 +11,9 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 | Feld | Text | Länge / Grenze |
 | --- | --- | --- |
 | Name | SanusAnkh – Notruf & Vorsorge | 29 / 30 |
-| Untertitel | Notruf, Apotheken, Notfallpass | 30 / 30 |
+| Untertitel | Notruf, Vorsorge & Messwerte | 28 / 30 |
 | Werbetext | Notrufnummern mit einem Tipp, Apotheken und Kliniken in der Nähe, dein Notfallpass auf dem Gerät und Erste-Hilfe-Wissen von DRK, Johanniter und Malteser. | 153 / 170 |
-| Schlüsselwörter | Notruf,112,Erste Hilfe,Apotheke,Notdienst,Notfallpass,Klinik,Vorsorge,Patientenverfügung,Bestatter | 98 / 100 |
+| Schlüsselwörter | 112,Erste Hilfe,Apotheke,Notdienst,Notfallpass,Klinik,Patientenverfügung,Bestatter,Hausapotheke (ohne Wörter aus Name und Untertitel, Apple wertet sie gemeinsam aus) | 95 / 100 |
 | Kategorie | Primär: Nachschlagewerke, sekundär: Lifestyle (nicht „Medizin“, das legt eine medizinische Zweckbestimmung nahe) | – |
 | Datenschutz-URL | `https://<domain>/datenschutz/` | – |
 | Support-URL | `https://<domain>/` (dort steht die Kontaktadresse im Impressum) | – |
@@ -23,7 +23,7 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 | Feld | Text | Länge / Grenze |
 | --- | --- | --- |
 | App-Name | SanusAnkh – Notruf & Vorsorge | 29 / 30 |
-| Kurzbeschreibung | Notruf 112, Apotheken in der Nähe, Notfallpass und Erste-Hilfe-Infos | 68 / 80 |
+| Kurzbeschreibung | Notruf 112, Vorsorge, Hausapotheke und Tagebuch für Blutdruck & Blutzucker | 74 / 80 |
 | Kategorie | Bücher & Nachschlagewerke (nicht „Medizin“) | – |
 | Datenschutzerklärung | `https://<domain>/datenschutz/` | – |
 

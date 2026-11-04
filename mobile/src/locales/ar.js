@@ -2,7 +2,7 @@
 
 export default {
   "brand.name": "SanusAnkh",
-  "brand.tagline": "الإسعافات الأولية ودليل الصحة",
+  "brand.tagline": "الطوارئ والتخطيط المسبق والقياسات",
 
   "nav.home": "الرئيسية",
   "nav.emergency": "طوارئ",

@@ -2,7 +2,7 @@
 
 export default {
   "brand.name": "SanusAnkh",
-  "brand.tagline": "İlk yardım ve sağlık rehberi",
+  "brand.tagline": "Acil çağrı, önceden planlama ve ölçümler",
 
   "nav.home": "Ana sayfa",
   "nav.emergency": "Acil durum",
