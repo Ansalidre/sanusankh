@@ -4,6 +4,8 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 
 **Wortwahl:** In Store-Texten, Screenshots und Werbung bitte nie verwenden: Symptom-Check, Einschätzung, Diagnose, Dringlichkeit. Ebenfalls vermeiden: „erkennt“, „prüft deine Beschwerden“, „sagt dir, was du hast“, „Gesundheitslotse“. Solche Begriffe würden eine medizinische Zweckbestimmung nahelegen.
 
+**Für das Messwerte-Tagebuch zusätzlich nie verwenden:** Überwachung, Auswertung, Kontrolle („Blutdruck-Kontrolle“, „Blutzucker im Griff“), Analyse, Monitoring, Grenzwert, Zielwert, Normalwert, Trend, „zu hoch“/„zu niedrig“, „Werte im Blick behalten“. Ebenfalls nicht: Medikamente, Insulin, Therapie, Diabetes-Management. Erlaubt sind Wörter, die nur das Aufschreiben beschreiben: eintragen, Tagebuch, Liste, Kurve, PDF, mit dem Arzt besprechen. Screenshots zeigen keine Werte, die nach „auffällig“ aussehen könnten. Neutrale Beispielwerte nehmen und die Kurve ohne Kommentar zeigen.
+
 ## App Store (Apple)
 
 | Feld | Text | Länge / Grenze |
@@ -42,10 +44,13 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 > Finde Apotheken, Notdienst-Apotheken und Kliniken auf der Karte und starte die Route in deiner Karten-App. Dein Standort wird nur für die Suche genutzt und nicht gespeichert.
 >
 > **Notfallpass**
-> Halte wichtige Angaben für Rettungskräfte bereit, zum Beispiel Kontaktpersonen, Allergien und Hinweise zu deiner Patientenverfügung. Der Notfallpass bleibt nur auf deinem Gerät.
+> Halte wichtige Angaben für Rettungskräfte bereit, zum Beispiel Kontaktpersonen, Allergien und Hinweise zu deiner Patientenverfügung. Der Notfallpass wird auf deinem Gerät gespeichert, nicht bei SanusAnkh.
 >
 > **Hausapotheke**
 > Eine Checkliste für Verbandsmaterial und Hilfsmittel mit Erinnerung an Ablaufdaten. Welche Arzneimittel in deine Hausapotheke gehören, klärst du mit deiner Apotheke.
+>
+> **Messwerte-Tagebuch**
+> Trage Blutdruck und Blutzucker mit Datum, Uhrzeit und Notiz ein. Sieh die Einträge als Liste und als einfache Kurve über 7, 30 oder 90 Tage und teile sie als PDF mit deiner Arztpraxis. Auf Wunsch erinnert dich die App täglich ans Eintragen. Das Tagebuch speichert nur deine Werte; besprich sie mit deinem Arzt.
 >
 > **Vorsorge**
 > Informationen zu Patientenverfügung, Vorsorgevollmacht und Bestattung, Bestatter in deiner Nähe und neutrale Informationen zur Sterbegeldversicherung. Bei ausgewählten Bestattern kannst du direkt eine Anfrage stellen, teils mit Rabatt.
@@ -54,7 +59,7 @@ Entwurf für App Store und Google Play. Die Texte beschreiben die App so, wie si
 > Stell Fragen zur App, zu Anlaufstellen wie Notdienst-Apotheken und zur Vorsorge. Gesundheitsfragen beantwortet der Assistent nicht, er verweist dafür auf 112, den ärztlichen Bereitschaftsdienst oder deine Hausarztpraxis.
 >
 > **Deine Daten bleiben bei dir**
-> Kein Konto, kein Tracking, keine Werbung. Notfallpass, Vorsorge-Angaben und Hausapotheke werden nur auf deinem Gerät gespeichert.
+> Kein Konto, kein Tracking, keine Werbung. Notfallpass, Vorsorge-Angaben, Hausapotheke und Messwerte liegen auf deinem Gerät und, falls du das eingeschaltet hast, in der Sicherung deines Google- bzw. Apple-Kontos. An SanusAnkh werden sie nicht übertragen.
 >
 > **Sprachen:** Deutsch, Englisch, Türkisch, Arabisch, Russisch, Ukrainisch, Polnisch, Italienisch, Französisch.
 >
@@ -75,13 +80,20 @@ Begründung vorerst: Dennis veröffentlicht die App als Privatperson, sie ist ko
 
 ## Hinweis für die App-Prüfung (App Review Notes / Play Console)
 
-> SanusAnkh is not a medical device. The app does not ask about symptoms or evaluate user input. It shows a fixed, general list of warning signs for calling the emergency number 112 and links to first-aid pages of recognised aid organisations (German Red Cross, Johanniter, Malteser). The AI assistant answers questions about the app, local services and planning ahead. It does not answer health questions and refers users to 112, the out-of-hours medical service or their doctor. No account is required. Funeral requests: users can send a request to a listed funeral director; the request is forwarded by e-mail; no payments are processed in the app. The app uses only local notifications (expiry reminders for the first-aid kit), no push notifications.
+> SanusAnkh is not a medical device. The app does not ask about symptoms or evaluate user input. It shows a fixed, general list of warning signs for calling the emergency number 112 and links to first-aid pages of recognised aid organisations (German Red Cross, Johanniter, Malteser). The AI assistant answers questions about the app, local services and planning ahead. It does not answer health questions and refers users to 112, the out-of-hours medical service or their doctor. No account is required. Funeral requests: users can send a request to a listed funeral director; the request is forwarded by e-mail; no payments are processed in the app. Readings diary: users can type in their own blood pressure and blood sugar readings; the app only stores and lists them, shows a simple chart over 7, 30 or 90 days and can create a PDF that the user shares via the system share sheet. The app does not evaluate the readings: no target or limit values, no colour coding by value, no trend statements, no advice on medication or insulin. The readings stay on the device and are not sent to our server or to the AI assistant; the assistant refers questions about readings to the user's doctor. The app uses only local notifications (expiry reminders for the first-aid kit and an optional daily reminder to enter readings), no push notifications.
 
 Wenn die Prüfer die Bestatter-Anfrage ausprobieren sollen, vorher in der Admin-Ansicht einen Test-Bestatter in einer bekannten Stadt anlegen und die Stadt hier nennen.
 
 ## Datenschutzangaben in den Stores
 
-Vorschlag, eher vorsichtig ausgefüllt. Grundlage ist [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md). Daten, die nur auf dem Gerät bleiben (Notfallpass, Hausapotheke, Vorsorge), gelten in beiden Stores nicht als „erhoben“.
+Vorschlag, eher vorsichtig ausgefüllt. Grundlage ist [RECHTSTEXTE-ANGABEN.md](RECHTSTEXTE-ANGABEN.md).
+
+**Daten auf dem Gerät gelten in beiden Stores nicht als „erhoben“.** Das betrifft Notfallpass, Hausapotheke, Vorsorge-Angaben und Messwerte. Ob die Gerätesicherung daran etwas ändert, habe ich am 04.11.2026 in der Hilfe beider Stores nachgesehen:
+
+- **Apple:** „Erheben“ heißt, Daten so vom Gerät zu übertragen, dass der Entwickler oder seine Partner länger darauf zugreifen können, als für die Anfrage nötig ist. Daten, die nur auf dem Gerät verarbeitet werden, gelten nicht als erhoben ([App Privacy Details](https://developer.apple.com/app-store/app-privacy-details/)).
+- **Google:** „Erheben“ heißt, Daten aus der App vom Gerät zu übertragen. Daten, die nur lokal verarbeitet werden, sind nicht anzugeben. Laut FAQ gilt das auch für Daten, die der Nutzer in seinen eigenen Cloud-Speicher hochlädt, wenn dafür die Bedingungen des Speicheranbieters gelten und die App selbst nie auf die Daten zugreift. Ebenfalls ausgenommen sind Daten, die Ende-zu-Ende-verschlüsselt übertragen werden ([Data safety](https://support.google.com/googleplay/android-developer/answer/10787469)).
+- **Ergebnis:** Keiner der beiden Stores erwähnt die Sicherung durch das Betriebssystem ausdrücklich. Die iCloud-Sicherung und die Android-Sicherung macht aber das Betriebssystem im Konto des Nutzers, nach den Bedingungen von Apple bzw. Google. SanusAnkh überträgt dabei nichts und hat keinen Zugriff. Die Android-Sicherung ist ab Android 9 mit Displaysperre Ende-zu-Ende-verschlüsselt. Die Sicherung ist daher **keine Erhebung durch SanusAnkh**, und die Angaben unten bleiben bei „Gesundheit: nein“.
+- **Offen bleibt die Datenschutzerklärung:** Die Sicherung wird dort und in den App-Texten offen erwähnt. Vor dem Einreichen die beiden Hilfeseiten noch einmal prüfen, ob sich etwas geändert hat.
 
 **Apple („App-Datenschutz“):** Tracking: **nein**.
 
@@ -90,7 +102,7 @@ Vorschlag, eher vorsichtig ausgefüllt. Grundlage ist [RECHTSTEXTE-ANGABEN.md](R
 | Kontaktinformationen: Name, E-Mail-Adresse, Telefonnummer (optional) | ja, nur bei einer Bestatter-Anfrage | ja | App-Funktionalität |
 | Benutzerinhalte: andere Inhalte (Nachricht und ggf. Bestattungswünsche in der Anfrage; Fragen an den Assistenten) | ja | Anfrage: ja; Assistent: nein | App-Funktionalität |
 | Standort: genauer Standort | ja, nur nach Freigabe für die Suche, nicht gespeichert | nein | App-Funktionalität |
-| Gesundheit, Kennungen, Nutzungsdaten, Käufe, Absturz- und Leistungsdaten | nein | – | – |
+| Gesundheit (Notfallpass, Messwerte: nur auf dem Gerät), Kennungen, Nutzungsdaten, Käufe, Absturz- und Leistungsdaten | nein | – | – |
 
 **Google Play („Datensicherheit“):**
 
@@ -104,10 +116,10 @@ Vorschlag, eher vorsichtig ausgefüllt. Grundlage ist [RECHTSTEXTE-ANGABEN.md](R
 | Nachrichten: sonstige In-App-Nachrichten (Nachricht an den Bestatter) | ja (optional) | ja (Bestatter) | App-Funktionen | |
 | App-Aktivitäten: sonstige nutzergenerierte Inhalte (Fragen an den Assistenten) | ja (optional) | nein | App-Funktionen | flüchtig verarbeitet |
 | Standort: genauer Standort | ja (optional) | nein | App-Funktionen | flüchtig verarbeitet |
-| Gesundheit und Fitness | nein | – | – | Notfallpass bleibt auf dem Gerät |
+| Gesundheit und Fitness | nein | – | – | Notfallpass und Messwerte bleiben auf dem Gerät (und ggf. in der Gerätesicherung des Nutzers); ein PDF teilt der Nutzer selbst über das System |
 
 In der Play Console zusätzlich ausfüllen:
 
-- **„Gesundheits-Apps“:** wahrheitsgemäß beschreiben. Die App bietet Notrufnummern und allgemeine Informationen, sie ist kein Medizinprodukt.
+- **„Gesundheits-Apps“:** wahrheitsgemäß beschreiben. Die App bietet Notrufnummern, allgemeine Informationen und ein Tagebuch für selbst eingetragene Blutdruck- und Blutzuckerwerte. Sie misst nichts, bewertet die Werte nicht und ist kein Medizinprodukt. Die Werte werden nur auf dem Gerät gespeichert. Keine Verbindung zu Messgeräten, Health Connect oder HealthKit.
 - **Einstufung der Inhalte** (Fragebogen).
 - **Zielgruppe:** Erwachsene.

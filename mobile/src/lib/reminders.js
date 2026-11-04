@@ -1,6 +1,7 @@
 /*
- * Lokale Erinnerungen an Ablaufdaten der Hausapotheke (expo-notifications, ohne Server, ohne Push-Token).
- * Pro Artikel zwei Termine: 14 Tage vorher und am Ablauftag, jeweils 9 Uhr.
+ * Lokale Erinnerungen (expo-notifications, ohne Server, ohne Push-Token):
+ * - Hausapotheke: pro Artikel zwei Termine, 14 Tage vor und am Ablauftag, jeweils 9 Uhr.
+ * - Messwerte-Tagebuch: optional eine tägliche Erinnerung zur gewählten Uhrzeit.
  */
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
@@ -55,6 +56,37 @@ export async function scheduleExpiry({ id, title, expires, texts }) {
     }
   } catch {
     // Erinnerungen sind eine Zusatzfunktion – der Hinweis in der App funktioniert auch ohne.
+  }
+}
+
+const MEASURE_ID = "measurements-daily";
+
+/** Entfernt die tägliche Messwerte-Erinnerung. */
+export async function cancelMeasurementReminder() {
+  if (!supported) return;
+  await Notifications.cancelScheduledNotificationAsync(MEASURE_ID).catch(() => {});
+}
+
+/**
+ * Plant die tägliche Messwerte-Erinnerung um `time` ("HH:MM") neu.
+ * Liefert "scheduled", "denied" (keine Erlaubnis für Mitteilungen) oder "unsupported".
+ */
+export async function scheduleMeasurementReminder({ time, title, body }) {
+  if (!supported) return "unsupported";
+  try {
+    await cancelMeasurementReminder();
+    let { status } = await Notifications.getPermissionsAsync();
+    if (status !== "granted") ({ status } = await Notifications.requestPermissionsAsync());
+    if (status !== "granted") return "denied";
+    const [hour, minute] = time.split(":").map(Number);
+    await Notifications.scheduleNotificationAsync({
+      identifier: MEASURE_ID,
+      content: { title, body },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour, minute },
+    });
+    return "scheduled";
+  } catch {
+    return "unsupported";
   }
 }
 

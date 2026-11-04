@@ -73,6 +73,19 @@ for (const m of guides.matchAll(/slug: "([^"]+)"[\s\S]*?links: \[([^\]]*)\]/g)) 
 }
 if (/\bsteps\s*:/.test(guides)) fail("guides", "eigene Anleitungsschritte (steps) sind nicht erlaubt");
 
-console.log(`${codes.size} Länder, ${ids.size} Hausapotheken-Einträge, ${topics} Erste-Hilfe-Themen geprüft.`);
+// --- Messwerte-Tagebuch: die Texte bewerten keine Werte (MDR) ---
+// Erlaubt ist nur der feste Hinweis, dass es keine Hinweise zu Medikamenten oder Insulin gibt (meas.noAdvice).
+const EVALUATING =
+  /zu hoch|zu niedrig|erhöht|auffällig|kritisch|gefährlich|bedenklich|normal|grenzwert|zielwert|richtwert|referenz|trend|anstieg|überwach|auswert|kontroll|analys|insulin|medikament|dosis|therapie/i;
+let measTexts = 0;
+for (const m of de.matchAll(/^\s*"(meas\.[\w.]+)": "(.*)",$/gm)) {
+  measTexts++;
+  if (m[1] !== "meas.noAdvice" && EVALUATING.test(m[2])) fail(`locales/de ${m[1]}`, `bewertender Begriff: „${m[2].match(EVALUATING)[0]}“`);
+}
+if (!de.includes('"meas.hint": "Das Tagebuch speichert nur deine Werte. Besprich sie mit deinem Arzt. Bei akuten Beschwerden 112."')) {
+  fail("locales/de meas.hint", "fester Hinweis fehlt oder wurde geändert");
+}
+
+console.log(`${codes.size} Länder, ${ids.size} Hausapotheken-Einträge, ${topics} Erste-Hilfe-Themen, ${measTexts} Tagebuch-Texte geprüft.`);
 console.log(`${problems} Probleme.`);
 process.exit(problems ? 1 : 0);

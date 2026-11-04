@@ -12,12 +12,15 @@ import {
   Hospital,
   Info,
   Languages,
+  HardDrive,
   Leaf,
+  NotebookPen,
   Phone,
   Pill,
   Save,
   Settings as SettingsIcon,
   ShieldCheck,
+  Trash2,
   Video,
 } from "lucide-react-native";
 import CountryPicker from "@/components/CountryPicker";
@@ -30,8 +33,11 @@ import { H2, Muted, T } from "@/components/ui/Text";
 import { TextField } from "@/components/ui/TextField";
 import { useToast } from "@/components/ui/Toast";
 import { LANGUAGES } from "@/data/languages";
+import { confirm } from "@/lib/confirm";
 import { useI18n } from "@/lib/i18n";
-import { prefs } from "@/lib/storage";
+import { cancelMeasurementReminder } from "@/lib/reminders";
+import { deleteReports } from "@/lib/shareReport";
+import { measurementStore, prefs } from "@/lib/storage";
 import { colors, TAP } from "@/lib/theme";
 
 const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
@@ -76,6 +82,16 @@ export default function More() {
     toast(t("settings.taxiSaved"));
   };
 
+  const deleteMeasurements = () => {
+    const count = measurementStore.get().entries.length;
+    confirm(t("settings.measDeleteTitle"), t("settings.measDeleteText", { count }), t("common.delete"), t("common.cancel"), () => {
+      measurementStore.clear();
+      cancelMeasurementReminder();
+      deleteReports();
+      toast(t("settings.measDeleted"));
+    });
+  };
+
   return (
     <Screen tab keyboard scrollRef={scrollRef}>
       <SectionHeader level={1} icon={SettingsIcon} title={t("settings.title")} />
@@ -88,6 +104,7 @@ export default function More() {
         <LinkRow to="/telemedicine" icon={Video} label={t("tele.title")} />
         <LinkRow to="/transport" icon={Car} label={t("transport.title")} />
         <LinkRow to="/cabinet" icon={BriefcaseMedical} label={t("cabinet.title")} />
+        <LinkRow to="/measurements" icon={NotebookPen} label={t("meas.title")} />
         <LinkRow to="/care" icon={Leaf} label={t("care.title")} />
       </Card>
 
@@ -146,6 +163,15 @@ export default function More() {
           onSubmitEditing={saveTaxi}
         />
         <Button variant="outline" icon={Save} label={t("common.save")} onPress={saveTaxi} />
+      </Card>
+
+      <Card style={styles.gap}>
+        <View style={styles.titleRow}>
+          <Icon as={HardDrive} color={colors.primary} />
+          <H2 style={styles.flex}>{t("settings.deviceData")}</H2>
+        </View>
+        <T>{t("settings.deviceDataText")}</T>
+        <Button variant="outline" icon={Trash2} label={t("settings.measDelete")} onPress={deleteMeasurements} />
       </Card>
 
       <Card tone={colors.ampel.orange} border="#F0C9A6" style={styles.gap}>

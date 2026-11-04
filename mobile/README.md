@@ -1,10 +1,17 @@
 # SanusAnkh – App für iOS und Android
 
-Native App (React Native mit Expo SDK 58 und Expo Router): 112-Schnellzugriff, allgemeine Warnzeichen („Wann 112 anrufen?“), 18 Erste-Hilfe-Themen mit Links zu DRK, Johanniter und Malteser, Notrufnummern je Land, Apotheken- und Kliniksuche, Checkliste Hausapotheke (Verbandsmaterial und Hilfsmittel) mit Ablauf-Erinnerung, Notfallpass (inkl. Patientenverfügung und Bestattungswünschen), Bereich „Vorsorge“ (Patientenverfügung, Bestatter in der Nähe mit Anfragen bei Kooperations-Bestattern, neutrale Info zur Sterbegeldversicherung) und KI-Assistent für Fragen zur App, zu Anlaufstellen und zur Vorsorge – in 9 Sprachen (DE, EN, TR, AR mit RTL, RU, UK, PL, IT, FR) und für 7 Länder vorbereitet (DE vollständig; AT, CH, IT, FR, TR, PL mit Notrufnummern).
+Native App (React Native mit Expo SDK 58 und Expo Router): 112-Schnellzugriff, allgemeine Warnzeichen („Wann 112 anrufen?“), 18 Erste-Hilfe-Themen mit Links zu DRK, Johanniter und Malteser, Notrufnummern je Land, Apotheken- und Kliniksuche, Checkliste Hausapotheke (Verbandsmaterial und Hilfsmittel) mit Ablauf-Erinnerung, Messwerte-Tagebuch (Blutdruck, Blutzucker; Liste, Kurve, PDF), Notfallpass (inkl. Patientenverfügung und Bestattungswünschen), Bereich „Vorsorge“ (Patientenverfügung, Bestatter in der Nähe mit Anfragen bei Kooperations-Bestattern, neutrale Info zur Sterbegeldversicherung) und KI-Assistent für Fragen zur App, zu Anlaufstellen und zur Vorsorge – in 9 Sprachen (DE, EN, TR, AR mit RTL, RU, UK, PL, IT, FR) und für 7 Länder vorbereitet (DE vollständig; AT, CH, IT, FR, TR, PL mit Notrufnummern).
 
 **Zweckbestimmung:** SanusAnkh ist kein Medizinprodukt. Die App fragt keine Beschwerden ab, wertet keine Eingaben aus, stellt keine Diagnosen, bewertet keine Dringlichkeit und gibt keine Behandlungs- oder Medikamentenempfehlungen. Sie formuliert keine eigenen Erste-Hilfe-Anleitungen, sondern verlinkt anerkannte Hilfsorganisationen. Diese Grenzen gelten auch für den KI-Assistenten (Systemprompt in `../netlify/functions/assistant.mjs`) und für die Store-Texte ([STORE-TEXTE.md](STORE-TEXTE.md)). Neue Funktionen bitte daran messen.
 
-Keine Konten: Notfallpass, Vorsorge-Angaben, Hausapotheke und Einstellungen liegen nur auf dem Gerät (AsyncStorage, Namespace `sanusankh.v1`; Foto der Verfügung im privaten App-Ordner). Gepflegte Inhalte (Länder, Hausapotheke, Vorsorge-Texte) sind JSON-Dateien in `src/content/`.
+Keine Konten: Notfallpass, Vorsorge-Angaben, Hausapotheke, Messwerte und Einstellungen liegen auf dem Gerät (AsyncStorage, Namespace `sanusankh.v1`; Foto der Verfügung im privaten App-Ordner). Die Gerätesicherung von Android und iOS ist bewusst nicht abgeschaltet: Sie nimmt diese Daten ins Google- bzw. Apple-Konto des Nutzers mit, damit sie beim Handywechsel erhalten bleiben. Die Texte sagen deshalb „auf deinem Gerät, nicht bei SanusAnkh“ statt „nur auf dem Gerät“. Gepflegte Inhalte (Länder, Hausapotheke, Vorsorge-Texte) sind JSON-Dateien in `src/content/`.
+
+**Messwerte-Tagebuch** (`src/app/measurements/`, Logik in `src/lib/measurements.js`, PDF in `src/lib/measurementReport.js`):
+- Blutdruck und Blutzucker, als Liste, als Kurve über 7, 30 oder 90 Tage und als PDF (`expo-print`, geteilt mit `expo-sharing`), dazu eine optionale tägliche lokale Erinnerung.
+- Blutzucker: Kurve und PDF rechnen auf die zuletzt gewählte Einheit um (Faktor 18,016) und kennzeichnen das. Das PDF nennt zusätzlich den eingegebenen Wert.
+- PDF-Sprache: Deutsch, bei anderer App-Sprache zweisprachig.
+- **Keine Bewertung (MDR):** keine Grenz- oder Zielwerte, keine Farben je Höhe, keine Durchschnitte und Trends, keine Hinweise zu Medikamenten oder Insulin. Die Eingabebereiche fangen nur Tippfehler ab.
+- `npm run check:content` meldet bewertende Wörter in den deutschen `meas.*`-Texten.
 
 **Sprache ≠ Land:** Die Sprache steuert nur die Texte. Das Land (Einstellung „Land“, beim ersten Start mit Vorschlag aus der Geräteregion abgefragt) steuert Notrufnummern, Kacheln und länderspezifische Inhalte. Der 112-Knopf funktioniert in allen Ländern.
 
@@ -98,7 +105,7 @@ Gebaut wird in der Cloud mit EAS Build – auch die iOS-App, ein Mac ist nicht n
 
 **Einmalig einrichten**
 
-1. Konten: Apple Developer Program (99 € pro Jahr; als Privatperson oder als Firma mit D-U-N-S-Nummer), Google Play Console (einmalig 25 USD; Firmenkonto ebenfalls mit D-U-N-S-Nummer), Expo-Konto (kostenlos). **Kein Firebase-Projekt, keine `google-services.json`, kein Apple-Push-Schlüssel nötig:** Die Erinnerungen der Hausapotheke sind lokale Benachrichtigungen; in `app.json` ist `enableRemoteNotifications: false` gesetzt, damit iOS keine Push-Berechtigung (`aps-environment`) bekommt.
+1. Konten: Apple Developer Program (99 € pro Jahr; als Privatperson oder als Firma mit D-U-N-S-Nummer), Google Play Console (einmalig 25 USD; Firmenkonto ebenfalls mit D-U-N-S-Nummer), Expo-Konto (kostenlos). **Kein Firebase-Projekt, keine `google-services.json`, kein Apple-Push-Schlüssel nötig:** Die Erinnerungen (Hausapotheke, Messwerte) sind lokale Benachrichtigungen; in `app.json` ist `enableRemoteNotifications: false` gesetzt, damit iOS keine Push-Berechtigung (`aps-environment`) bekommt.
 2. `npx eas-cli@latest login` und `npx eas-cli@latest init` (verknüpft das Projekt mit dem Expo-Konto).
 3. `EXPO_PUBLIC_API_URL` (und ggf. `EXPO_PUBLIC_SITE_URL`) unter *expo.dev → Projekt → Environment variables* für die Umgebung „production“ setzen.
 4. **App Store Connect:** App mit Bundle-ID `de.sanusankh.app` anlegen. Beim ersten `npm run submit:ios` fragt EAS nach Apple-ID bzw. App-Store-Connect-API-Schlüssel und merkt sich die App (`ascAppId`). Zertifikate und Profile erstellt EAS beim ersten iOS-Build selbst.
@@ -137,6 +144,7 @@ src/app/                     Bildschirme (Expo Router)
   (tabs)/                    index, emergency (Warnzeichen), guides (Erste-Hilfe-Themen), pass, more
   guide/[slug]  profile/…    Erste-Hilfe-Thema mit Links, Notfallpass anlegen/bearbeiten/Vollbild
   cabinet                    Hausapotheke (Checkliste)
+  measurements/              Messwerte-Tagebuch: index (Liste, Kurve, PDF, Erinnerung), edit (Eintrag anlegen/bearbeiten)
   care/                      Vorsorge: index, directive, funeral, partner/[id], request, sent, requests, insurance
   numbers, pharmacy, telemedicine, transport, hospitals, legal/[page]
 src/components/              Screen, AppHeader, EmergencyCallButton, SourceLinks, CountryPicker, CareInfo, Such- und Formular-Bausteine
@@ -144,5 +152,6 @@ src/components/              Screen, AppHeader, EmergencyCallButton, SourceLinks
 src/content/                 gepflegte Inhalte als JSON: countries, medicineCabinet, careInfo
 src/data/                    Sprachkonfiguration (languages.js), Warnzeichen, Erste-Hilfe-Themen
 src/locales/                 eine Datei pro Sprache (de, en, tr, ar, ru, uk, pl, it, fr)
-src/lib/                     i18n (Sprache + Land), content, storage, api, ai, partners, geo, links, reminders, scans, theme
+src/lib/                     i18n (Sprache + Land), content, storage, api, ai, partners, geo, links, reminders, scans, theme,
+                             measurements, measurementReport, shareReport, confirm
 ```

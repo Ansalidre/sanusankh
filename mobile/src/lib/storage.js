@@ -6,7 +6,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NS = "sanusankh.v1";
-const KEYS = ["prefs", "profiles", "cabinet", "partners", "requests"];
+const KEYS = ["prefs", "profiles", "cabinet", "partners", "requests", "measurements"];
 // Nicht mehr genutzte Daten älterer Versionen (Verlauf des früheren Symptom-Checks) – werden beim Start gelöscht.
 const LEGACY_KEYS = ["history"];
 
@@ -94,6 +94,53 @@ export const cabinetStore = {
     const next = { ...all, [id]: { ...all[id], ...patch } };
     write("cabinet", next);
     return next;
+  },
+};
+
+const DEFAULT_MEASUREMENTS = { entries: [], glucoseUnit: "mg/dl", printName: "", reminder: { enabled: false, time: "08:00" } };
+
+/**
+ * Messwerte-Tagebuch – nur auf dem Gerät (und in der Gerätesicherung des Nutzers, falls eingeschaltet):
+ * { entries: [{ id, kind: "bp"|"glucose", at: "YYYY-MM-DDTHH:MM", sys, dia, pulse, value, unit, context, note,
+ *   createdAt, updatedAt }], glucoseUnit (zuletzt gewählt), printName (für das PDF), reminder: { enabled, time } }
+ */
+export const measurementStore = {
+  get() {
+    const value = read("measurements", {});
+    const data = value && typeof value === "object" ? value : {};
+    return {
+      ...DEFAULT_MEASUREMENTS,
+      ...data,
+      entries: Array.isArray(data.entries) ? data.entries : [],
+      reminder: { ...DEFAULT_MEASUREMENTS.reminder, ...data.reminder },
+    };
+  },
+  set(patch) {
+    const next = { ...measurementStore.get(), ...patch };
+    write("measurements", next);
+    return next;
+  },
+  entry(id) {
+    return measurementStore.get().entries.find((e) => e.id === id) || null;
+  },
+  save(entry) {
+    const all = measurementStore.get();
+    const now = new Date().toISOString();
+    const saved = { ...entry, id: entry.id || newId(), updatedAt: now, createdAt: entry.createdAt || now };
+    const entries = all.entries.some((e) => e.id === saved.id)
+      ? all.entries.map((e) => (e.id === saved.id ? saved : e))
+      : [...all.entries, saved];
+    const patch = { entries };
+    if (saved.kind === "glucose") patch.glucoseUnit = saved.unit;
+    measurementStore.set(patch);
+    return saved;
+  },
+  remove(id) {
+    measurementStore.set({ entries: measurementStore.get().entries.filter((e) => e.id !== id) });
+  },
+  /** Löscht alle Messwerte, den Namen für den Ausdruck und die Erinnerungseinstellung. */
+  clear() {
+    write("measurements", DEFAULT_MEASUREMENTS);
   },
 };
 

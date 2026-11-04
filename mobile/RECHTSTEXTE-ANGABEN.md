@@ -34,6 +34,7 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 | **Anthropic** (KI) | Anthropic Ireland, Limited (Vertragspartner für EU-Kunden); Verarbeitung durch Anthropic, PBC, USA | KI-Assistent und Übersetzung von App-Inhalten | Text der Frage, Sprache, gewähltes Land; zu übersetzende App-Texte (keine Personendaten) | Auftragsverarbeiter, Übermittlung in die USA möglich |
 | **OpenStreetMap Foundation** | OSMF, Vereinigtes Königreich | Karten (tile.openstreetmap.org), Suche nach Apotheken und Kliniken (Overpass-API), Ortssuche für Bestatter (Nominatim) | IP-Adresse; Standort-Koordinaten (nur nach Freigabe, nur für die Suche); eingegebener Ort bzw. eingegebene Postleitzahl | eigener Verantwortlicher ([Datenschutzerklärung der OSMF](https://osmfoundation.org/wiki/Privacy_Policy)) |
 | **Apple App Store / Google Play** | Apple Inc. / Google Ireland Ltd. | Bereitstellung und Updates der App | Store-Konto, Download, ggf. Absturzberichte (wenn der Nutzer sie freigibt) | eigene Verantwortliche |
+| **Gerätesicherung** (iCloud-Backup / Android-Sicherung im Google-Konto) | Apple / Google | Sicherung der App-Daten durch das Betriebssystem, nur wenn der Nutzer sie eingeschaltet hat | alle lokal gespeicherten App-Daten: Notfallpass (inkl. Gesundheitsdaten und Foto der Verfügung), Hausapotheke, Vorsorge-Angaben, eigene Anfragen, Messwerte | eigene Verantwortliche; SanusAnkh hat keinen Zugriff (siehe unten „Gerätesicherung“) |
 | **Bestatter, die über die App angefragt werden können** | jeweiliger Bestatter | Bearbeitung der Anfrage | Anfrage-Daten (siehe Brevo), per E-Mail und ggf. Webhook | eigener Verantwortlicher (bei der Zustimmung zur Listung festhalten; mit Provision im Kooperationsvertrag) |
 
 **Ohne Datenübermittlung:**
@@ -59,8 +60,10 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 | Notruf und Nummern | Antippen öffnet die Telefon-App | – | niemanden (Anruf läuft über den Mobilfunkanbieter) |
 | Warnzeichen, Erste-Hilfe-Themen | feste Liste, Links zu Hilfsorganisationen | – | beim Antippen eines Links: Website der Organisation |
 | Apotheken- und Kliniksuche | nur nach Standortfreigabe | Standort wird nicht gespeichert | Koordinaten → OSM Overpass; Kartenkacheln → OSM |
-| Notfallpass | Angaben inkl. Gesundheitsdaten, Patientenverfügung (Ort, Vollmacht), optional Foto der Verfügung, Bestattungswünsche | **ja, nur dort** | niemanden; nur wenn der Nutzer selbst „Als Text teilen“ wählt |
-| Hausapotheke | Checkliste, Ablaufdaten, lokale Erinnerungen | ja | niemanden |
+| Notfallpass | Angaben inkl. Gesundheitsdaten, Patientenverfügung (Ort, Vollmacht), optional Foto der Verfügung, Bestattungswünsche | **ja** (und ggf. Gerätesicherung) | niemanden; nur wenn der Nutzer selbst „Als Text teilen“ wählt |
+| Hausapotheke | Checkliste, Ablaufdaten, lokale Erinnerungen | ja (und ggf. Gerätesicherung) | niemanden |
+| Messwerte-Tagebuch | Blutdruck (systolisch, diastolisch, optional Puls), Blutzucker (Wert, Einheit, optional „nüchtern/nach dem Essen“), Datum, Uhrzeit, Notiz; optional Name für den Ausdruck; optional tägliche lokale Erinnerung | **ja** (und ggf. Gerätesicherung) | niemanden: nicht an Netlify, nicht an die KI. Die App bewertet die Werte nicht. |
+| Messwerte als PDF teilen | PDF entsteht auf dem Gerät (Cache-Ordner, nicht in der Gerätesicherung), wird beim nächsten Export und beim Löschen aller Messwerte entfernt | – | nur an den Empfänger, den der Nutzer selbst im Teilen-Menü des Handys wählt (z. B. E-Mail an die Arztpraxis) |
 | KI-Assistent | Frage eintippen und senden | – | Frage, Sprache, Land → Netlify → Anthropic. Es wird nichts gespeichert. |
 | Übersetzung von App-Inhalten (Vorsorge-Texte, Leistungen der Bestatter) | bei Sprache ≠ Deutsch | Übersetzung nur im Arbeitsspeicher | App-Texte → Netlify → Anthropic (keine Personendaten) |
 | Bestatter suchen | Ort/PLZ oder Standort | – | Ort/PLZ und Land → OSM Nominatim; Land → Netlify (Partnerliste) |
@@ -74,12 +77,23 @@ Vor der Wahl prüfen, ob die Lizenz die gewerbliche Nutzung **und Apps** abdeckt
 
 - Standort: nur auf Anfrage, für die Suche.
 - Kamera und Fotos: nur für das Foto der Patientenverfügung; das Bild bleibt in der App.
-- Mitteilungen: Ablauf-Erinnerungen der Hausapotheke.
+- Mitteilungen: Ablauf-Erinnerungen der Hausapotheke und, falls eingeschaltet, die tägliche Erinnerung des Messwerte-Tagebuchs. Beides sind lokale Mitteilungen ohne Server.
 
 **Besondere Kategorien (Art. 9 DSGVO):**
 
-- Der Notfallpass enthält Gesundheitsdaten. Er bleibt nur auf dem Gerät.
+- Der Notfallpass enthält Gesundheitsdaten. Er liegt auf dem Gerät und ggf. in der Gerätesicherung des Nutzers, nicht bei SanusAnkh.
+- Die Werte im Messwerte-Tagebuch sind Gesundheitsdaten. Sie liegen ebenfalls nur auf dem Gerät und ggf. in der Gerätesicherung. Ein PDF geht nur per eigenem Klick an einen selbst gewählten Empfänger. Löschen: in der App unter „Mehr & Einstellungen“ → „Alle Messwerte löschen“, einzelne Einträge beim Bearbeiten.
 - Bestattungswünsche können religiöse Überzeugungen enthalten. Sie gehen nur an den Bestatter, wenn der Nutzer sie selbst an eine Anfrage anhängt. Die Rechtsgrundlage dafür ist die Einwilligung per Checkbox.
+
+**Gerätesicherung:** Die automatische Sicherung von Android und iOS bleibt bewusst eingeschaltet, damit Notfallpass, Hausapotheke und Messwerte beim Handywechsel erhalten bleiben.
+
+- Android legt die App-Daten in einem privaten Ordner im Google-Konto des Nutzers ab. Ab Android 9 mit Displaysperre sind sie Ende-zu-Ende-verschlüsselt ([Android-Doku „Auto Backup“](https://developer.android.com/identity/data/autobackup)).
+- iOS nimmt die App-Daten in das iCloud-Backup des Nutzers auf, wenn es eingeschaltet ist.
+- SanusAnkh hat auf beide Sicherungen keinen Zugriff.
+
+In allen Texten (App, Store, Datenschutzerklärung) heißt es deshalb nicht „nur auf dem Gerät“, sondern sinngemäß: „Die Werte liegen auf deinem Gerät und, falls du das eingeschaltet hast, in der Sicherung deines Google- bzw. Apple-Kontos. An SanusAnkh werden sie nicht übertragen.“
+
+Der Abschnitt „Daten auf deinem Gerät“ in `datenschutz/index.html` steht außerhalb des Generator-Bereichs und bleibt beim Einfügen des Generator-Texts erhalten. Der Generator-Text darf ihm nicht widersprechen, zum Beispiel nicht von Tracking oder einem Push-Dienst sprechen.
 
 ## 4. Standardverträge zur Auftragsverarbeitung (AVV/DPA)
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Inbox, Lock, Phone, Trash2, Undo2 } from "lucide-react-native";
 import Notice from "@/components/Notice";
 import Screen from "@/components/Screen";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { H3, Muted, T } from "@/components/ui/Text";
+import { confirm } from "@/lib/confirm";
 import { useI18n } from "@/lib/i18n";
 import { useCall } from "@/lib/links";
 import { withdrawRequest } from "@/lib/partners";
@@ -17,17 +18,6 @@ import { colors } from "@/lib/theme";
 import { formatDate } from "@/lib/utils";
 
 const ERRORS = { offline: "partner.offline", not_withdrawable: "requests.notWithdrawable" };
-
-function confirm(title, text, confirmLabel, cancelLabel, onConfirm) {
-  if (Platform.OS === "web") {
-    if (globalThis.confirm?.(`${title}\n\n${text}`)) onConfirm();
-    return;
-  }
-  Alert.alert(title, text, [
-    { text: cancelLabel, style: "cancel" },
-    { text: confirmLabel, style: "destructive", onPress: onConfirm },
-  ]);
-}
 
 /**
  * „Meine Anfragen“: nur auf dem Gerät gespeichert (Code, Bestatter, Leistung, Datum, Status).
